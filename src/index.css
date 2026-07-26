@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  body {
+    margin: 0;
+    background: #0c0a09;
+    color: #e7e5e4;
+    -webkit-font-smoothing: antialiased;
+    /* The phone is read at a treadmill, often one-handed and mid-warm-up. */
+    font-size: 16px;
+  }
+  button:focus-visible {
+    outline: 2px solid #fb923c;
+    outline-offset: 3px;
+  }
+  button:active { transform: scale(0.99); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+}
+
+@layer components {
+  /* The one thing on the screen that must read from arm's length. */
+  .numeral {
+    font-family: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.85;
+    letter-spacing: -0.01em;
+  }
+  .label {
+    font-family: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.6875rem;
+    color: #a8a29e;
+  }
+  .rule { border-color: #292524; }
+
+  .btn {
+    @apply w-full rounded-xl px-5 py-4 font-semibold transition-colors;
+  }
+  .btn-primary {
+    @apply btn bg-stone-100 text-stone-950 active:bg-white;
+    font-size: 1.0625rem;
+  }
+  .btn-quiet {
+    @apply btn bg-transparent text-stone-400 border border-stone-800 active:bg-stone-900;
+  }
+  .btn-option {
+    @apply w-full rounded-xl border border-stone-800 bg-stone-900/60 px-4 py-4 text-left text-stone-100 active:bg-stone-800;
+  }
+}

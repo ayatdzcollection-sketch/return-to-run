@@ -9,7 +9,7 @@
 
 import type { LocalDate } from './dates.ts'
 import { compareDates } from './dates.ts'
-import type { AppEvent, HrConfidence, PainLocation, Prescription, Surface } from './types.ts'
+import type { AppEvent, HrConfidence, PainLocation, Prescription, StopReason, Surface } from './types.ts'
 import { isBonyLocation } from './types.ts'
 import { normalizeEvents, round1 } from './events.ts'
 
@@ -57,7 +57,7 @@ export interface Timeline {
   days: Map<LocalDate, DayRecord>
   ordered: DayRecord[]
   profile: Profile
-  talkTests: { date: LocalDate; passedSpeedMph: number; hrAtPassedSpeed: number | null }[]
+  talkTests: { date: LocalDate; passedSpeedMph: number; maxSpeedMph: number; stopReason: StopReason; hrAtPassedSpeed: number | null }[]
   gateAnswers: Set<string>
   firstDate: LocalDate | null
   lastOpenDate: LocalDate | null
@@ -148,7 +148,13 @@ export function buildTimeline(events: readonly AppEvent[]): Timeline {
         break
       case 'talk_test_result': {
         const step = e.steps.find((s) => s.speedMph === e.passedSpeedMph)
-        talkTests.push({ date: e.date, passedSpeedMph: e.passedSpeedMph, hrAtPassedSpeed: step?.meanHrLast60s ?? null })
+        talkTests.push({
+          date: e.date,
+          passedSpeedMph: e.passedSpeedMph,
+          maxSpeedMph: e.steps.reduce((m, s) => Math.max(m, s.speedMph), 0),
+          stopReason: e.stopReason,
+          hrAtPassedSpeed: step?.meanHrLast60s ?? null,
+        })
         break
       }
       case 'probe_result':

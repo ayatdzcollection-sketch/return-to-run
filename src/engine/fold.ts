@@ -39,6 +39,7 @@ export interface FoldResult extends AthleteState {
   interruptReason: string | null
   ceilingProvisional: boolean
   belowJogFloor: boolean
+  calibrationResumeFromMph: number
   toleranceFactor: number
   sessionsNeededPerLevel: number
 }
@@ -199,6 +200,7 @@ export function computeState(events: readonly import('./types.ts').AppEvent[], t
     interruptReason: interrupt.reason,
     ceilingProvisional: cal.provisional,
     belowJogFloor: cal.belowJogFloor,
+    calibrationResumeFromMph: cal.resumeFromMph,
     toleranceFactor: toleranceFactor(toleranceClass),
     sessionsNeededPerLevel: needed,
   }

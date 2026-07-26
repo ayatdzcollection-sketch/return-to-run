@@ -169,7 +169,7 @@ export const RATIONALE_CODES = [
   'progression_continuity',
   'progression_intensity',
   'held_weekly_cap',
-  'held_acwr',
+  'held_session_cap',
   'held_longest_session',
   'held_footwear',
   'held_surface_transition',
@@ -273,6 +273,18 @@ export type AppEvent = EventBase &
   )
 
 export type AppEventType = AppEvent['type']
+
+/**
+ * An event minus the fields the storage layer stamps on.
+ *
+ * Distributed over the union deliberately: a plain `Omit<AppEvent, ...>`
+ * collapses a discriminated union into one object type carrying only the keys
+ * every member shares, so `prescription`, `location` and the rest would stop
+ * type-checking at every call site.
+ */
+export type EventDraft<T = AppEvent> = T extends AppEvent
+  ? Omit<T, 'id' | 'at' | 'schema'>
+  : never
 
 /** Narrowing helper: `isEvent(e, 'pain_reported')` gives the full payload type. */
 export function isEvent<T extends AppEventType>(

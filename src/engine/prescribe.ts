@@ -88,8 +88,8 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
       plannedJogMin: TUNABLES.TALK_TEST.LADDER_MAX_MIN,
       plannedTotalMin: 10 + TUNABLES.TALK_TEST.LADDER_MAX_MIN,
       speedCeilingMph: null,
-      speedMinMph: TUNABLES.TALK_TEST.LADDER_START_MPH,
-      speedMaxMph: round1(TUNABLES.TALK_TEST.LADDER_START_MPH
+      speedMinMph: state.calibrationResumeFromMph,
+      speedMaxMph: round1(state.calibrationResumeFromMph
         + (TUNABLES.TALK_TEST.LADDER_MAX_MIN / TUNABLES.TALK_TEST.LADDER_STEP_MIN) * TUNABLES.TALK_TEST.LADDER_STEP_MPH),
       hrCeiling: null,
       rationaleCode: 'calibration_discovery',
@@ -150,6 +150,19 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
   })
   caps.push(...loadResult.caps)
 
+  // A calibrated ceiling below a viable jog is not a failed test — it means
+  // walk/run IS the correct prescription and a running speed is not. The
+  // ceiling is left where it is (a low cap is safe; raising it would not be)
+  // and the situation is recorded so the UI can label it honestly.
+  if (state.belowJogFloor) {
+    caps.push({
+      rule: 'below_jog_floor',
+      original: TUNABLES.TALK_TEST.MIN_VIABLE_JOG_MPH,
+      applied: state.ceilings.speedCeilingMph ?? 0,
+      note: 'ceiling is at brisk-walk pace — the walk/run structure is the prescription',
+    })
+  }
+
   let jogMin = loadResult.jogMin
   if (footwear.sessionCapMin !== null && footwear.sessionCapMin < jogMin) {
     caps.push({ rule: 'footwear_session_cap', original: jogMin, applied: footwear.sessionCapMin })
@@ -195,13 +208,15 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
 
   const rationaleCode: RationaleCode = kind === 're_entry' ? 're_entry_silence'
     : state.isDownWeek ? 'down_week'
-      : loadResult.binding === 'session_cap' ? 'held_weekly_cap'
-        : loadResult.binding === 'down_week' ? 'down_week'
-          : heat.level !== 'none' ? 'held_surface_transition'
-            : surface.record ? 'held_surface_transition'
-              : footwear.record ? 'held_footwear'
-                : dow === 0 ? 'probe_day'
-                  : 'progression_duration'
+      : loadResult.binding === 'session_cap' ? 'held_session_cap'
+        : loadResult.binding === 'weekly_cap' ? 'held_weekly_cap'
+          : loadResult.binding === 'longest_session_share' ? 'held_longest_session'
+            : loadResult.binding === 'down_week' ? 'down_week'
+              : heat.level !== 'none' ? 'held_surface_transition'
+                : surface.record ? 'held_surface_transition'
+                  : footwear.record ? 'held_footwear'
+                    : dow === 0 ? 'probe_day'
+                      : 'progression_duration'
 
   return {
     ...base,

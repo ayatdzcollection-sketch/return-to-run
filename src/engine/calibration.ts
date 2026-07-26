@@ -31,6 +31,10 @@ export interface CalibrationResult {
   hrAtTalkSpeed: number | null
   /** Below the viable-jog floor, the prescription must be walk/run, not a speed. */
   belowJogFloor: boolean
+  /** Where the next discovery ladder starts, when calibration is unfinished. */
+  resumeFromMph: number
+  /** True while the ladder has only ever run out of time, never found a change. */
+  unfinished: boolean
 }
 
 /**
@@ -42,9 +46,33 @@ export interface CalibrationResult {
  */
 export function calibrate(t: Timeline): CalibrationResult {
   if (t.talkTests.length === 0) {
-    return { conversationalSpeedMph: null, provisional: true, hrAtTalkSpeed: null, belowJogFloor: false }
+    return {
+      conversationalSpeedMph: null, provisional: true, hrAtTalkSpeed: null,
+      belowJogFloor: false, resumeFromMph: TUNABLES.TALK_TEST.LADDER_START_MPH, unfinished: true,
+    }
   }
-  const recent = t.talkTests.slice(-TUNABLES.TALK_TEST.CALIBRATION_SESSIONS)
+
+  // A ladder that ran out of time never found the ceiling — it only proved the
+  // ceiling is ABOVE the top speed reached. Treating that as a result would
+  // pin him to a brisk walk forever, because eight minutes of 0.2 mph steps
+  // from 4.0 mph cannot reach a realistic jogging speed. So an unfinished
+  // ladder does not complete calibration: the next discovery session resumes
+  // from where this one stopped, and each is only eight jogging minutes —
+  // the same dose as the first rung of the plan.
+  const found = t.talkTests.filter((r) => r.stopReason !== 'time_limit')
+  const topReached = Math.max(...t.talkTests.map((r) => r.maxSpeedMph))
+
+  if (found.length === 0 && t.talkTests.length < MAX_DISCOVERY_SESSIONS) {
+    return {
+      conversationalSpeedMph: null, provisional: true, hrAtTalkSpeed: null,
+      belowJogFloor: false, resumeFromMph: topReached, unfinished: true,
+    }
+  }
+
+  // After enough attempts without a reported change, accept the top speed
+  // reached rather than leaving him without a plan. The full margin still
+  // applies, so this errs slow.
+  const recent = (found.length > 0 ? found : t.talkTests).slice(-TUNABLES.TALK_TEST.CALIBRATION_SESSIONS)
   const passed = Math.min(...recent.map((r) => r.passedSpeedMph))
   const hrs = recent.map((r) => r.hrAtPassedSpeed).filter((h): h is number => h !== null)
   const speed = round1(passed - TUNABLES.TALK_TEST.BACKOFF_MPH)
@@ -56,8 +84,13 @@ export function calibrate(t: Timeline): CalibrationResult {
     // failure of the test — it means walk/run is the correct prescription and
     // a running speed is not.
     belowJogFloor: speed < TUNABLES.TALK_TEST.MIN_VIABLE_JOG_MPH,
+    resumeFromMph: topReached,
+    unfinished: false,
   }
 }
+
+/** Attempts before the engine accepts the top speed reached and moves on. */
+const MAX_DISCOVERY_SESSIONS = 3
 
 /**
  * The easy-HR ceiling. Empirical, never a percentage of anything.
