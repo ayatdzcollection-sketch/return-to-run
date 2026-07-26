@@ -1,0 +1,21 @@
+{
+  "name": "Return to Run",
+  "short_name": "Return",
+  "description": "Return to running — one session at a time",
+  "start_url": "/return-to-run/",
+  "display": "standalone",
+  "background_color": "#0c0a09",
+  "theme_color": "#0c0a09",
+  "icons": [
+    {
+      "src": "/return-to-run/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/return-to-run/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
