@@ -65,3 +65,40 @@ One entry per build stage, plus a standing record of choices that a future reade
 - **v1 HR ingestion is manual entry.** The CMF Watch Pro 3 has no public API and no validation data exists for it or its price class during running. Manual entry caps `hr_confidence` at `low`, which is a state the engine is designed to run in indefinitely. CSV import sits behind a flag.
 - **Narrative layer is deterministic templates.** `FLAGS.LLM_NARRATIVE` is off; no API key, no network dependency, works in a basement. If ever enabled it becomes a Supabase Edge Function — a client-side key is never acceptable.
 - **The engine is pure and the ban is mechanical.** `src/engine` and `src/config` may not reference `Date`, browser storage, or browser globals, and may not import from `src/lib`. Calendar arithmetic uses Hinnant civil↔day-number conversion so the `Date` ban has no exceptions to reason about. Enforced by `noBannedConcepts.static.test.ts`, which also implements invariant 13 by construction: it greps the shipped source for any max-heart-rate concept. That invariant is the best-supported decision in the brief — age-based formulas overestimate by 12.4 bpm in youth, and an individual 15-year-old's 95% prediction interval spans roughly 181–216 bpm.
+
+---
+
+## Stages 1–3 — Engine, phase gates, interrupts, HR pipeline
+
+**Gate:** 141 tests green — all thirteen invariants and all eighteen required cases, plus fold determinism and a twelve-week replay. No UI existed when this gate closed.
+
+- **Frequency is fixed at three, so the progression order changed.** The brief's order was frequency → duration → continuity → intensity, written expecting frequency to climb toward daily. It cannot: a fourth running day inside a seven-day week cannot satisfy the 48-hour spacing rule (Mon/Wed/Fri is the maximum non-consecutive set that repeats weekly). The fourth-day unlock in the tunables is therefore a documented ceiling that the scheduler never reaches, and the dimensions that actually progress are duration and continuity.
+- **Two HR signals with two urgencies.** Aerobic drift is inferential — it says the pace was *probably* above easy — so it takes two occurrences to move a ceiling. A ceiling breach is direct: his measured easy ceiling was exceeded while the belt sat at the prescribed speed. That drops the speed immediately. Collapsing them into one counter would have made R10 and R14 contradict each other.
+- **Drift breaches are counted cumulatively, not in a rolling window.** A rolling count would let a ceiling drop expire on its own after two weeks — a rise with no evidence behind it, which invariant 12 forbids. Cumulative counting is the conservative reading.
+- **Contradictory events resolve toward less credit.** Over-crediting a session inflates the baseline every future cap is computed from; under-crediting only slows him down. So `missed` and `cut_short` beat `completed`, and two reports of the same shortfall keep the smaller.
+- **Session structures shrink by losing repetitions, not by shortening intervals.** The interval length is what is being trained at a given level; cutting it would change what the session is rather than how much of it there is.
+
+## Stage 4 — Storage, sync, UI, deploy
+
+**Gate:** driven end to end in a browser — calibration wizard, today card, pain triage, blocking gate. Built, deployed, and loading from GitHub Pages.
+
+- **A real design flaw surfaced only by driving the actual UI**, not by any unit test: the brief's discovery ladder stops at 8 minutes, stepping 0.2 mph from 4.0, so it tops out at 4.6 mph. Minus the 1.0 mph margin that is 3.6 mph — a brisk walk. **The engine could never have derived a jogging speed at all.** Every test that handed `calibrate()` a talk-test result rather than running the ladder was blind to it.
+  - **Fix:** a ladder that runs out of time no longer completes calibration. It only proves the ceiling is *above* the top speed reached, so the next discovery session resumes from there. Each is eight jogging minutes — the same dose as the first rung of the plan — and it converges in two or three. After three attempts with no reported breathing change the engine accepts the top speed reached rather than leaving him without a plan, with the full margin still applied.
+  - A ceiling that still lands below jogging pace is **labelled "walk speed"** rather than dressed up as a run. The ceiling itself is left alone: a low cap is safe, and raising it to look more like running would not be.
+- **A dev-only `?date=` override**, stripped from production builds. Possible at zero cost precisely because the engine takes `today` as a parameter.
+- **The sync badge degrades loudly.** "On this phone only" and "not backed up" are the states that lose a season, so they are stated rather than hidden.
+
+## Stage 5 — Narrative
+
+**Gate:** every rationale code renders a sentence, asserted by exhaustiveness test; zero network calls with the flag off.
+
+- **The honesty constraint is a test, not a style note.** One case walks every rendered sentence and every setup notice and fails if prevention and injury appear in the same sentence without a negation carrying it — because Buist 2008 tested "does a gradual ladder prevent injury" in 532 novice runners with this athlete's exact detraining criterion and found 20.8% vs 20.3%. Another fails on streak, badge, or motivational-filler language.
+  - That test caught its own author: the first version flagged the app's *own* honest disclaimer ("not proven to prevent injury"). The check now reads sentence by sentence and requires a negation, which is the distinction that actually matters.
+- **Pain triage asks four binary, behaviour-anchored questions** rather than a 0–10 scale. Severity correlates poorly with radiological severity in bone stress injury, and it is the single input a motivated 15-year-old can shade downward at no cost. "Did it hurt more at the end than at the start?" cannot be gamed the same way.
+
+## Open items for the human reviewer
+
+1. **Run the Supabase migration.** Until then the log lives on one phone. The verification statements at the bottom of the SQL file must fail — if `update` or `delete` succeeds, the append-only model is not in force.
+2. **Michigan's WBGT region category is unverified** against Grundstein et al. 2015. Category 1 (the conservative choice) is encoded; Category 2 would shift every heat threshold about 2 °C warmer.
+3. **Whether the watch exposes per-sample cadence is unknown**, and the cadence-lock rule presupposes it. The fallback (transition and variance tests alone) works without it. The gates ship in shadow mode either way, because cadence lock is quantified nowhere in the peer-reviewed literature.
+4. **Energy availability and sleep are scoped but not built.** They carried the highest certainty rating of any modifiable factor in the systematic review of this exact population, and they are the clearest remaining gap between what the evidence says matters and what the engine currently measures.
