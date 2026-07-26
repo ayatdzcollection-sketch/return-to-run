@@ -39,12 +39,23 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 /**
- * Remove comments so prose can name the banned concepts.
+ * Reduce a file to executable code: comments removed, string contents emptied.
  *
- * Tracks string and template literals so a `//` inside a URL isn't mistaken
- * for a comment. Regex literals are NOT tracked — a regex containing a comment
- * marker would confuse it — but a false positive here is a loud test failure,
- * never a silent pass, which is the right way for this to fail.
+ * Both bans below are about what the code DOES. A comment explaining why max
+ * heart rate is forbidden, or an evidence citation quoting a study that
+ * measured one, is documentation — this file's own header does exactly that.
+ * Emptying string bodies (while keeping their delimiters, so the surrounding
+ * syntax still parses) lets the tunables register cite real sources without
+ * tripping its own guard.
+ *
+ * The gap this leaves is bracket access built from a string literal, e.g.
+ * `state['max_hr']`. That is not a realistic way to write the offending code —
+ * every plausible form (`const maxHr =`, `hrMax()`, `220 - age`) is an
+ * identifier or arithmetic and is still caught.
+ *
+ * Regex literals are not tracked. A regex containing a comment marker would
+ * confuse the scanner, but the failure mode is a loud test failure rather than
+ * a silent pass, which is the right direction for this to break in.
  */
 function stripComments(src: string): string {
   type State = 'code' | 'line' | 'block' | 'single' | 'double' | 'template'
@@ -71,12 +82,12 @@ function stripComments(src: string): string {
       else if (c === '\n') out += c
       continue
     }
-    // Inside a string literal.
-    if (c === '\\') { out += c + (src[i + 1] ?? ''); i++; continue }
+    // Inside a string literal: keep the closing delimiter, drop the contents.
+    if (c === '\\') { i++; continue }
     if ((state === 'single' && c === "'") || (state === 'double' && c === '"') || (state === 'template' && c === '`')) {
       state = 'code'
+      out += c
     }
-    out += c
   }
   return out
 }

@@ -64,11 +64,51 @@ The mechanism is plausible and specific: day-to-day load variation gives bone an
 
 **Caveat, stated honestly:** the *JOSPT* null on volume is measured *within* an already-training range. Absence of an association across a narrow exposure band is not evidence that ramping from zero is safe. Volume control is kept — it is simply no longer believed to be the whole story.
 
-## A6. ACWR does not survive. `moderate`
+## A6. ACWR is removed entirely, and its lower bound was a safety defect. `strong` against
 
-Best-evidence synthesis in adolescent athletes reports **moderate evidence for NO association between acute:chronic workload ratio and injury**. This corroborates the mathematical-coupling critique (the acute window is a component of the chronic window, producing spurious correlation) and matches the earlier engine's independent decision to reject ACWR.
+Invariant 7 clamps ACWR to 0.8–1.3. The dedicated review came back unambiguous: **this is not defensible, and the lower bound is actively unsafe.** Seven independent lines converge:
 
-**Amendment pending the load-guardrail thread's report** (which was tasked specifically with what replaces it). Current direction: ACWR is retained as a *logged diagnostic* only, never a prescription clamp, and invariant 7 is rewritten around a guardrail with actual support. Invariant 7 as written is not defensible.
+1. **The source figure is under a formal retraction request.** The 0.8–1.3 "sweet spot" originates in Blanch & Gabbett 2016 (*BJSM*, elite adult cricket/rugby/AFL players). Impellizzeri et al. submitted a letter to *BJSM* requesting retraction or erratum on the grounds that the figure was fitted to aggregated rather than raw data.
+2. **The coupled form is spurious by construction.** Acute load is both the numerator and a component of the denominator. "This spurious correlation will be present irrespective of any true physiological association" (Lolli et al., *BJSM* 2019). This is a mathematical fact, not an empirical claim, so it is population-independent — it applies to n=1 exactly as it applies to a squad.
+3. **Uncoupling and EWMA do not rescue it.** Coupled and uncoupled behave similarly in runners; EWMA has a known **initial-load problem** — which is precisely, fatally, this athlete's situation.
+4. **In runners the association runs backwards.** Two prospective cohorts, different countries, different statistical frameworks, same reversed direction. Nakaoka 2021 (n=435, Bayesian): ACWR < 0.70 → 9.6% injury probability; ACWR > 1.38 → **1.3%**. Frandsen 2025 (n=5,205, multistate Cox): uncoupled ACWR >100% → **HRR 0.75 (0.59–0.96), p=0.02**. Almost certainly reverse causation — runners with a niggle cut their load, so low ratios *precede* reported injury — but that is the point: **the metric does not measure what the clamp assumes it measures.**
+5. **The one RCT, in adolescents, was null.** Dalen-Lorentsen et al. 2021 (*BJSM*, cluster RCT, 482 elite youth footballers, coaches planned a full 10-month season using published ACWR principles): **RR 1.01 (95% CI 0.91–1.12), p=0.84.**
+6. **It is arithmetically undefined at this baseline.** With 12 months at zero, the chronic denominator is zero in week 1 and dominated by zeros through week 4. Any non-zero start produces a ratio far above 1.3 by necessity. Frandsen's own coding for this state is "not possible to calculate."
+7. **The lower bound would instruct a detrained 15-year-old to train MORE to satisfy a metric.** That is not insufficient conservatism; it is a safety defect pointing the wrong way.
+
+**Amendment adopted — invariant 7 is replaced, not weakened.** ACWR is removed from the prescription path entirely. It is not clamped, not uncoupled, not EWMA'd, and not kept as a lower bound in any form. What replaces it is A6b.
+
+## A6b. The replacement guardrail is per-session, not per-week. `moderate-strong`
+
+The single most decision-relevant paper in the whole research pass: **Frandsen et al. 2025, *BJSM* 59(17), n=5,205 runners, 588,071 GPS-measured sessions, 18-month prospective, multistate Cox with competing risks.** It is the only study to test session-level, ACWR, and week-level exposures *head to head in the same data*, which makes the relative ranking internally valid even where the absolute numbers don't transfer.
+
+Relative to a session at or below 110% of the **longest run in the previous 30 days**, adjusted hazard rate ratios for a first overuse injury were:
+
+| Session vs 30-day longest | Adjusted HRR |
+|---|---|
+| >10–30% | **1.64 (1.31–2.05)** |
+| >30–100% | **1.52 (1.16–2.00)** |
+| >100% | **2.28 (1.50–3.48)** |
+
+In the same cohort, **week-level metrics showed nothing** — week-to-week ratio 0.97 / 0.88 / 0.91, all non-significant. Corroborating this from the target population: Joachim et al. (Wisconsin high-school cross-country runners) found **no association between total volume, duration, or week-to-week change and in-season injury, p ≥ 0.54.**
+
+A companion paper from the same cohort found that most overuse injuries had a **sudden onset attributable to a single session** rather than gradual accumulation — which is the mechanistic reason a per-session gate beats a weekly budget reconciled after the fact.
+
+**Two caveats kept on the record.** The gradient is not monotonic (1.64 for >10–30% exceeds 1.52 for >30–100%), so the honest reading is "anything above ~10% carries roughly 1.5–2.3× the rate," not a clean dose-response. And the authors flag the rule's own failure mode: 10 km → 11 → 12.1 → 13.3 inside one week is three compliant 10% steps and is plainly excessive. **The rule does not compose across sessions**, which is why it needs a second constraint.
+
+**Adopted:**
+- **Primary:** no session exceeds **110% of the longest session in the previous 30 days**, in jogging minutes.
+- **Composition constraint:** only **one new-longest session per week**.
+- **Near-zero fix:** `min( max(1.10 × L, L + 1 min), L + 3 min, 30 min )`. At L = 8 min a pure 10% rule yields a 48-second increment — arithmetically degenerate and uninterpretable, giving absurdly small steps early (when tissue is least conditioned) and large ones late. The `+1 min` floor sits inside the 10–30% band that Nielsen 2014 found *not* significantly elevated. `weak` — this exact construction has never been tested and is labelled as a reasoned extension, not a finding.
+- **The weekly cap survives as cheap secondary insurance only** (≤ +20% and ≤ +10 min absolute; Damsted 2019's reference category was <20%, not <10%). It never overrides the session cap and is never described to the athlete as evidence-based.
+
+**30 minutes is a terminal ceiling, not a waypoint.** Pollock et al. 1977 — the only minutes-anchored dataset in previously untrained males (n=157, 20 weeks) — found injury incidence of 22% at 15 min/session, 24% at 30 min, and **54% at 45 min**; and by frequency, 12% at 3 days/week versus **39% at 5 days/week**. It is a 1977 study of an inmate cohort training at 85–90% of maximum, so the absolute rates are an upper bound — but it is the closest thing to on-point evidence that exists for this app's units and population, and nothing has superseded it. It independently corroborates A18's three-days-a-week finding from a completely different direction.
+
+## A6c. Honest baseline: a perfectly executed return still carries real injury risk. `strong`
+
+High-school cross-country: **17.0 injuries per 1,000 athlete-exposures** (boys 15.0). Adult novice runners: **10.9%** cumulative incidence over a 6-week supervised start-to-run programme (NLstart2run, n=1,696); **14.9%** pooled novice incidence across 4,720 runners. Rauh 2014: **15.9% of high-school cross-country runners sustained a time-loss injury in the first month** of the season (boys 13.2%).
+
+**A well-run return for this athlete still carries roughly a 10–15% chance of a time-loss injury.** The app must not promise or imply otherwise, and NLstart2run identified "absence of previous running experience" as an independent risk factor the engine cannot modify.
 
 ## A7. Energy availability is the highest-certainty modifiable risk factor — and it is out of scope in the brief. `moderate-strong`
 
@@ -231,6 +271,78 @@ This is the best demographic match in the entire research pass — same age, sam
 Buist et al. 2008 tested precisely this, head to head, in 532 novice runners with the same 12-months-detrained entry criterion as this athlete: a 13-week graded programme versus a standard 8-week programme. **Injury rates were 20.8% and 20.3% (p = 0.90).** GRONORUN 2 similarly found that a four-week walking-and-hopping preconditioning block before running did not reduce injuries (15.2% vs 16.8%, p = 0.69).
 
 **The app must not claim that gradualness prevents injury**, in its copy or in its rationale sentences. What the evidence supports is a weaker and still worthwhile claim: a graduated ladder is the studied way to *build capacity* to 30 minutes, it keeps progression below the empirically flagged >30%-per-2-weeks threshold, and it creates the symptom-monitoring structure that catches problems early. That is what the narrative layer is allowed to say.
+
+## A22. "Treadmill capacity overstates road capacity" is not supported as stated — and is backwards for the Achilles. `moderate`
+
+The brief's §12 rationale for the road-transition modifier was belt-assisted push-off and lower impact. Both parts are wrong.
+
+**Belt-assisted push-off is a myth.** With a constant belt speed, treadmill and overground running are mechanically equivalent and require equal propulsion (van Ingen Schenau, *MSSE* 1980; endorsed in Van Hooren et al. 2020). Overground the runner translates over a stationary foot; on a belt the foot translates beneath a stationary runner. **These are the same relative motion in two inertial frames.** The intuition mistakes a change of reference frame for a change of physics. `strong`
+
+**Impact load is not lower — the evidence is tissue-specific and internally contradictory:**
+
+| Measure | Treadmill vs overground | Source |
+|---|---|---|
+| Peak vertical GRF | **No difference** (−0.05 BW, CI −0.11 to 0.01) | Van Hooren 2020, SR/MA, 33 studies, n=494 |
+| Loading rate, tibial acceleration | **No difference** | same |
+| Achilles tendon peak force | **+12.5% HIGHER on treadmill** (p<.001) | Willy 2016, *JOSPT* 46(8) |
+| Achilles loading rate | **+15.6% HIGHER** (p<.001) | same |
+| Tibial load (pooled) | Lower on treadmill, SMD −0.83 (CI −1.53, −0.12) | Keast 2022, *Sports Med*, SR/MA |
+| Field wearable kinetics (n=71) | **HIGHER on treadmill**, 0.17–1.30 g | DeJong Lempke 2024, *J Biomech* |
+
+Two systematic reviews disagree on tibial load, and the field-wearable authors state the opposite of the brief's hypothesis as their explicit clinical recommendation.
+
+**Nor does surface compliance help.** Treadmill decks absorb 64% of shock versus under 2% for asphalt — but runners re-tune leg stiffness across a 25-fold surface-stiffness range **within a single step**, preserving centre-of-mass displacement, contact time and peak force (Ferris 1999; Kerdok 2002). Compliance *relocates* load into the athlete's own muscle-tendon units; it does not remove it.
+
+**Amendment adopted.** The road-transition modifier is **kept but re-based and restructured**:
+- Its justification in code is no longer "treadmill under-loads." It is that Aug 10 stacks **five or six simultaneous novel stressors within 48 hours** — surface, footwear, volume, intensity, pace control, and social context — and that at *slow* speeds treadmill HR and RPE run **lower** than overground at matched speed (Miller 2019, SR/MA of 34 studies), so the same minutes outdoors are a genuinely higher internal load.
+- **Duration:** −20% for the first four outdoor sessions, then −10% for two more. Extended from three, because three sessions is far shorter than any plausible tissue timescale. Labelled precautionary — **no study has ever measured this transition in either direction.**
+- **An intensity cap is added, and matters more than the duration cut.** The escalation risk on Aug 10 is pace, not minutes: perceived speed is distorted without optic flow, and team practice removes external pace control.
+- **Weekly volume is held flat across the changeover week.**
+- **No separate surface-hardness penalty is stacked on top** — that would double-count a factor with no supporting evidence.
+
+## A23. The treadmill incline should be 0.5%, not 1% — and it barely matters. `moderate`
+
+The 1% convention comes from Jones & Doust 1996, whose **slowest tested speed was 2.92 m/s — 9:11 min/mile.** This athlete's entire range (4.5–6.0 mph, 2.01–2.68 m/s) sits *below the bottom of the validated band*, in the direction where the authors themselves found the correction already statistically indistinguishable from zero.
+
+The correction compensates for air resistance, and drag scales with v², so required grade ∝ v². Anchored to Jones & Doust's own exact-match datum at 3.75 m/s, `G(v) = 1% × (v/3.75)²` retrodicts all five of their speeds correctly and gives **0.29% at 4.5 mph rising to 0.51% at 6.0 mph.** A cross-check against Pugh's drag coefficient agrees.
+
+**Adopted: 0.5%, or 0% on a treadmill without half-percent increments.** But the honest note for whoever maintains this: the entire 0%-to-1% span is worth **under 4% of metabolic cost** at these speeds, which is below the noise floor of a minutes-based load model. It is not exposed as a tunable and is not worth engineering effort. The reason to prefer the low end is secondary and mechanism-only: incline raises plantarflexor demand, and the treadmill already over-loads the Achilles (A22) in an athlete whose tendon is the age-specific weak link.
+
+## A24. Footwear gets no numeric multiplier — the brief over-weighted it. `moderate`
+
+**No study anywhere examines running injury in people running in non-running footwear.** The brief's footwear modifiers (impact budget × 0.7, no session over 25 min) are mechanism-only inference.
+
+Three things argue the real risk is small: his pace sits below the speeds at which footwear kinetics were measured, and **speed dominates tibial shock over cushioning by η² = 0.80 versus 0.39** (Lam 2018); the exposure is two weeks; and footwear RCTs move injury hazard only ~0.5–1.8× over six months at far higher volumes.
+
+One caution is real: a **light runner in a hard-soled shoe** carried SHR 1.80 (95% CI 1.09–2.98) in an 848-runner RCT — and a 15-year-old is well under that trial's 78 kg median split. So the variable that matters is not "running shoe versus not" but **cushioned versus hard-soled skate/court.**
+
+**Amendment adopted:** the footwear multiplier is replaced with (a) a setup instruction to use the most cushioned, lightest shoes available, (b) a symptom flag on foot, shin and calf discomfort rather than a volume penalty, and (c) **shin monitored specifically** — it has the highest new-injury rate of any location in high-school cross-country.
+
+**New shoes on Aug 8 need no modifier if they are conventional trainers.** No break-in evidence exists; 1,773 runners across three RCTs entered novel shoes with no run-in and no early injury spike. **The exception is real and gets a substantial modifier:** minimalist, zero-or-low-drop, or carbon-plated shoes — 10 of 19 runners transitioning to minimalist footwear developed **bone marrow oedema on MRI within 10 weeks** (p = 0.009), subclinically. **The best action is to gate the purchase, not the transition:** choose a conventional cushioned trainer on comfort and fit, **not arch type** — arch-matching is the most decisively falsified heuristic in the footwear literature, and it is the one adolescents actually use (73% of surveyed adolescent cross-country runners ranked it first; only 57% knew their own arch type).
+
+## A25. Heat will trigger the drift detector on its own, so the detector must be gated by environment. `moderate`
+
+This is the sharpest interaction the research pass found between two of the brief's own rules.
+
+At 35 °C, heart rate rose **11% from minute 15 to 45** at a constant work rate, versus **2% at 22 °C** (Lafrenz & Wingo, *MSSE* 2008, randomised crossover). **At a working heart rate of 150, an 11% rise is about 16 bpm — comfortably above the brief's 8–10 bpm "the pace was too hard" threshold, and above even the raised threshold in A16.** A second study independently observed 12 bpm of drift over 43 minutes at 35 °C with effort held constant.
+
+The detector cannot separate the two causes from the signal, because heart rate *is* the summed output of metabolic and thermoregulatory demand — it was the single strongest predictor of thermal strain during self-paced running in heat (β = 0.462, ahead of WBGT at 0.327).
+
+**Amendment adopted: gate, do not correct.** The drift verdict is computed **only** on sessions inside a reference thermal band, and outside it the "pace was too hard" conclusion is **suppressed entirely** rather than adjusted by an uncertain coefficient, with a note that no pacing conclusion was drawn. A suppressed rule generates no notification, which fits the exception-only model exactly. Two supporting rules: a drift flag must **recur across two qualifying sessions** before it moves a ceiling, and the easy-HR ceiling is only valid in the thermal environment where it was calibrated — an unfanned indoor calibration runs biased upward and must be re-derived at the outdoor transition.
+
+**Michigan August, computed from NOAA hourly observations for Detroit, Lansing and Grand Rapids, 2010–2025:** on roughly **74% of August afternoons** an unfit, unacclimatized youth is in an ACSM band calling for reduced intensity *and* duration; about **19% reach the "cancel practice" band**. At 7–9 a.m. those figures are **22% and 0%**. Michigan's own MHSAA heat-index policy triggers on about **5%** of afternoons and reaches its stop tier on essentially none — it is a cancellation-grade emergency policy, not a training-load tool.
+
+**Adopted:** any session the engine schedules itself in August is a **morning** session. That single rule removes most of the problem, and the engine has no authority over team practice anyway.
+
+## A26. Two heat findings that change the plan rather than a threshold. `strong` / `moderate`
+
+**The indoor treadmill needs a fan, and this is not a minor comfort note.** Cycling to exhaustion at 30 °C: **41 minutes with no airflow versus 58 minutes at 10 km/h of airflow** — a 41% difference, with higher core temperature, skin temperature, heart rate and RPE in still air (Otani 2018). Still air nearly halves the environment's maximum evaporative capacity (160 vs 298 W·m⁻²). An easy run outdoors at 10–11 km/h generates about 10 km/h of relative airflow; indoors it generates none. The benefit plateaus above ~16 km/h, so an ordinary household fan captures nearly all of it, and cooling must be **in place from the start** — applying it after drift develops does not reverse the decrement. A non-air-conditioned indoor space at 30–33 °C ambient measured **WBGT 28–30 °C in 17-year-old athletes** — the ACSM "cancel" band. An indoor space is not automatically a safe space. `strong`
+
+**Adopted:** a one-time setup instruction — *point a fan at yourself before you start the treadmill* — shown once and never repeated, which is compatible with exception-only reporting.
+
+**A 15-year-old is not more heat-vulnerable than an adult.** The AAP formally reversed its earlier position (2011 statement, reaffirmed March 2025): youth do not have less effective thermoregulation when hydration is adequate. The best single study — 68 children aged 10–16 plus 24 adults, treadmill, 30 °C and 40 °C — found **no effect of age on core temperature (p ≥ 0.176)**, with the one exception running the opposite way (adults got hotter). His elevated risk is entirely **detraining and lack of acclimatization**, which is a *more* conservative ACSM column than "youth" would have been. `strong`
+
+**The most valuable thing this finding unlocks:** heat acclimatization is driven by exercise-heat *exposure*, not by aerobic fitness (Ravanelli 2021 — fit and unfit did not differ at matched heat production, but eight weeks of training improved the same people). **So the indoor treadmill block confers fitness but essentially no heat adaptation**, and he would arrive on Aug 10 fully unacclimatized, in the month when 60% of US high-school heat illness occurs. Adaptation is front-loaded — 75–80% of it lands in the first 4–7 exposures. **Adopted: convert part of the pre-Aug-10 prescribed minutes to short, easy, early-morning outdoor sessions.** Active 14.6-year-olds achieved measurable adaptation at a daytime WBGT of only 21.2 °C, which Michigan mornings supply comfortably. Note also, for the human reviewer: **Aug 10 to Aug 19 is nine days, so the recommended 14-day acclimatization period will still be incomplete at the first meet.**
 
 ---
 
