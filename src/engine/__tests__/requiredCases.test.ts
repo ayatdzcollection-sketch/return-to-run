@@ -3,7 +3,7 @@
 //
 // Four of them assert behaviour the Stage 0 research pass replaced. Those are
 // kept, renamed, and assert the AMENDED behaviour with the original stated
-// alongside — so a reader checking the brief against the code finds the
+// alongside, so a reader checking the brief against the code finds the
 // divergence written down rather than a missing test.
 // ============================================================
 
@@ -62,7 +62,7 @@ describe('R2: shin pain at 4/10 -> forced rest, phase drops, the gate blocks res
 
   it('does NOT resume on a three-day countdown', () => {
     // AMENDED from the brief. The trigger is unchanged; the response is not.
-    // A fixed 3-day timer manufactures a false "cleared" state — conservative
+    // A fixed 3-day timer manufactures a false "cleared" state, conservative
     // tibial bone stress injury management runs 6-27 weeks. See RESEARCH.md §A3.
     expect(sim.state(addDays(hurt, 3)).interruptKind).toBe('bone')
     expect(sim.peek(addDays(hurt, 3)).plannedJogMin).toBe(0)
@@ -94,7 +94,7 @@ describe('R3: a 60-minute team session against a 30-minute trailing week -> a ca
 
 describe('R4 [AMENDED]: the load guardrail clamps and logs the original', () => {
   // The brief said: ACWR of 1.5 -> clamped to 1.3, original logged. The ACWR
-  // clamp was removed outright — see RESEARCH.md §A6 and the I7 block. What
+  // clamp was removed outright, see RESEARCH.md §A6 and the I7 block. What
   // replaces it must still clamp and still log, which is what this asserts.
   it('clamps an over-large session and records what it replaced', () => {
     const windows = { acuteMin: 60, chronicMin: 50, thisWeekMin: 20, lastWeekMin: 90, lastBuildWeekMin: 90, longest30dMin: 20, newLongestThisWeek: 0, daysSinceLastRun: 2 }
@@ -185,8 +185,8 @@ describe('R8: with no running shoes, no session over 25 minutes can be generated
 
 describe('R9 [AMENDED]: cadence coincidence marks samples suspect; artifact discards them', () => {
   // The brief discarded any sample where bpm == cadence +/-3 for >30 s. For
-  // THIS athlete that is the expected state during a legitimate easy run —
-  // easy HR ~140-155 against a jogging cadence of ~150-170 — so the rule as
+  // THIS athlete that is the expected state during a legitimate easy run
+  // easy HR ~140-155 against a jogging cadence of ~150-170, so the rule as
   // written would delete most valid data and declare honest sessions unusable.
   // Coincidence now lowers confidence; independent evidence discards.
   // See RESEARCH.md §A15.
@@ -269,7 +269,7 @@ describe('R11: a rise late in a long run is drift, not a breach', () => {
 
 describe('R12 [AMENDED]: a talk test of 6.2 mph gives 5.2, not 6.2 and not 5.8', () => {
   // The brief subtracted 0.4 to reach 5.8. That margin is SMALLER than the
-  // talk test's own minimal detectable change (~0.9-1.0 mph) — a margin inside
+  // talk test's own minimal detectable change (~0.9-1.0 mph), a margin inside
   // the instrument's noise floor protects nothing. See RESEARCH.md §A13.
   it('subtracts the full margin', () => {
     const sim = new Sim(); sim.calibrate(6.2)
@@ -290,7 +290,7 @@ describe('R13 [AMENDED]: an implausible raw ceiling is rejected, not truncated',
 
   it('rejects 168 rather than laundering it into 150', () => {
     // The brief resolved 168 to 150. But the talk test approximates VT1, which
-    // sits near 140 bpm in an adolescent — so a reading of 168 at talk-test
+    // sits near 140 bpm in an adolescent, so a reading of 168 at talk-test
     // speed is evidence of SENSOR ERROR, most likely cadence lock. Truncating
     // it would turn a garbage measurement into a plausible-looking number.
     expect(easyHrCeiling(168)).toEqual({ ceiling: null, truncated: false, rejected: true })
@@ -369,7 +369,7 @@ describe('R17: the whole plan generates with no HR device', () => {
   })
 })
 
-// R18 — "any code path computing a max HR fails by construction" — is
+// R18, "any code path computing a max HR fails by construction". Is
 // implemented in noBannedConcepts.static.test.ts, which reads the shipped
 // source rather than exercising it. It lives there because a runtime test
 // cannot prove the absence of a code path.

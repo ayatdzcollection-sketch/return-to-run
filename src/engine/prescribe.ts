@@ -1,5 +1,5 @@
 // ============================================================
-// PRESCRIBE — one function for every kind of session.
+// PRESCRIBE: one function for every kind of session.
 //
 // Rest days, calibration, walk/run, continuous runs, re-entry after an
 // interrupt, and team participation caps all come out of here. That is
@@ -29,7 +29,7 @@ const RUN_DAYS = [0, 2, 4]
  *
  * Not cosmetic. Failing to alternate short and long days carried OR 3.0
  * (95% CI 1.4-6.4) for early-season injury in high-school cross-country
- * runners — better prospective support than any volume rule in the build
+ * runners, better prospective support than any volume rule in the build
  * brief, which did not mention it at all. Monday is the medium day because it
  * also carries the weekly probe.
  */
@@ -102,7 +102,7 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
 
   // ── 3. Scheduled rest ─────────────────────────────────────
   // Three runs a week, never consecutive, 48 hours apart. Every located
-  // protocol — studied or clinical — prescribes 2-4 days; none prescribes the
+  // protocol, studied or clinical, prescribes 2-4 days; none prescribes the
   // 5-7 the brief assumed. Tendon net collagen balance is negative for the
   // first 24-36 hours after a loading bout, so a fourth day inside a seven-day
   // week cannot satisfy the spacing rule and is not offered.
@@ -150,7 +150,7 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
   })
   caps.push(...loadResult.caps)
 
-  // A calibrated ceiling below a viable jog is not a failed test — it means
+  // A calibrated ceiling below a viable jog is not a failed test, it means
   // walk/run IS the correct prescription and a running speed is not. The
   // ceiling is left where it is (a low cap is safe; raising it would not be)
   // and the situation is recorded so the UI can label it honestly.
@@ -159,7 +159,7 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
       rule: 'below_jog_floor',
       original: TUNABLES.TALK_TEST.MIN_VIABLE_JOG_MPH,
       applied: state.ceilings.speedCeilingMph ?? 0,
-      note: 'ceiling is at brisk-walk pace — the walk/run structure is the prescription',
+      note: 'ceiling is at brisk-walk pace, the walk/run structure is the prescription',
     })
   }
 
@@ -242,8 +242,7 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
 function rest(
   base: { id: string; date: LocalDate; phase: import('./types.ts').Phase; inclinePct: number },
   code: RationaleCode,
-  caps: CapRecord[],
-): Prescription {
+  caps: CapRecord[]): Prescription {
   return {
     ...base,
     kind: 'rest',
@@ -271,7 +270,7 @@ function discoveryStructure(): IntervalBlock[] {
 /**
  * Shrink a level's structure to fit an allowed jog-minute budget.
  *
- * Repeat-based levels lose repetitions rather than shortening each interval —
+ * Repeat-based levels lose repetitions rather than shortening each interval
  * the interval length is the thing being trained, so cutting it would change
  * what the session is. Levels built from explicit jog blocks scale those blocks
  * proportionally instead.

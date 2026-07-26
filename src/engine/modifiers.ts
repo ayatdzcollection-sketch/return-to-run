@@ -1,5 +1,5 @@
 // ============================================================
-// MODIFIERS — footwear, surface, heat, and the weekly probe.
+// MODIFIERS: footwear, surface, heat, and the weekly probe.
 //
 // Each returns a cap or a multiplier plus an audit record. None of them can
 // ever raise a limit; the strongest applies and the rest are logged.
@@ -14,7 +14,7 @@ import { TUNABLES } from '../config/tunables.ts'
 // ── Footwear ────────────────────────────────────────────────
 // Deliberately de-emphasised relative to the build brief. No study anywhere
 // examines running injury in people running in non-running footwear, and at
-// this athlete's paces the shoe term is where it matters least — speed
+// this athlete's paces the shoe term is where it matters least, speed
 // dominates tibial shock over cushioning by eta-squared 0.80 vs 0.39. The caps
 // below are kept as cheap precaution and labelled as such. The one footwear
 // transition with real evidence is minimalist, and it gets a real modifier.
@@ -39,7 +39,7 @@ export function footwearLimit(state: FootwearState, sessionsSinceChange: number)
           rule: 'footwear_none',
           original: TUNABLES.FOOTWEAR.NONE_SESSION_CAP_MIN,
           applied: TUNABLES.FOOTWEAR.NONE_SESSION_CAP_MIN,
-          note: 'precautionary — no direct evidence exists either way',
+          note: 'precautionary, no direct evidence exists either way',
         },
         advice: 'Use the most cushioned, lightest shoes you have. Avoid hard-soled skate or court shoes.',
       }
@@ -55,7 +55,7 @@ export function footwearLimit(state: FootwearState, sessionsSinceChange: number)
           rule: 'footwear_new',
           original: TUNABLES.FOOTWEAR.NEW_SHOES_DAILY_CAP_MIN,
           applied: TUNABLES.FOOTWEAR.NEW_SHOES_DAILY_CAP_MIN,
-          note: 'precautionary — break-in periods for conventional trainers are lore',
+          note: 'precautionary, break-in periods for conventional trainers are lore',
         },
         advice: null,
       }
@@ -70,7 +70,7 @@ export function footwearLimit(state: FootwearState, sessionsSinceChange: number)
 // vertical GRF shows no difference, and Achilles load is 12.5% HIGHER on a
 // treadmill. The real reason is that the changeover stacks five or six novel
 // stressors inside 48 hours, and that at slow speeds treadmill heart rate and
-// RPE run LOWER than overground at matched speed — so the same minutes
+// RPE run LOWER than overground at matched speed, so the same minutes
 // outdoors are a higher internal load. See RESEARCH.md §A22.
 
 export interface SurfaceLimit {
@@ -103,7 +103,7 @@ export function surfaceLimit(surface: Surface, outdoorSessions: number): Surface
 // ── Heat ────────────────────────────────────────────────────
 // August in Michigan: on roughly 74% of afternoons an unfit, unacclimatized
 // youth is in a band calling for reduced intensity AND duration; ~19% reach
-// "cancel". At 7-9am those figures are 22% and 0% — which is why any session
+// "cancel". At 7-9am those figures are 22% and 0%, which is why any session
 // the engine schedules itself in August is a morning session.
 
 export type HeatLevel = 'none' | 'mild' | 'moderate' | 'high' | 'unsafe'
@@ -162,7 +162,7 @@ export function computeProbe(t: Timeline, today: LocalDate): ProbeState {
     return { trend: 'insufficient', consecutiveImprovements: 0, stagnant: false, mayRaiseCeiling: false }
   }
 
-  // Only compare probes run at the SAME frozen speed — that is the whole point
+  // Only compare probes run at the SAME frozen speed, that is the whole point
   // of freezing it. A probe at a different speed is not comparable.
   const latestSpeed = probes.at(-1)!.speed
   const comparable = probes.filter((p) => Math.abs(p.speed - latestSpeed) < 0.05)

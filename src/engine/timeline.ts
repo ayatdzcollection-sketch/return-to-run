@@ -1,5 +1,5 @@
 // ============================================================
-// TIMELINE — the one pass over the event log that everything else reads.
+// TIMELINE: the one pass over the event log that everything else reads.
 //
 // The fold is not allowed to scan the log repeatedly with slightly different
 // rules; that is how two derivations quietly disagree. Instead this module
@@ -78,7 +78,7 @@ function blank(date: LocalDate): DayRecord {
  *
  * 1. Completed sessions carry no minutes. They reference a frozen
  *    `prescription_issued` event and the minutes are read from there. That is
- *    what makes exception-only reporting work — a Done tap is one bit.
+ *    what makes exception-only reporting work, a Done tap is one bit.
  *
  * 2. Contradictions resolve conservatively. If the same prescription is both
  *    completed and missed (two devices, a mis-tap, a late correction), the

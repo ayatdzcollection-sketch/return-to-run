@@ -1,5 +1,5 @@
 // ============================================================
-// INTERRUPTS — pain, silence, and the gates that block a prescription.
+// INTERRUPTS: pain, silence, and the gates that block a prescription.
 //
 // These are DERIVATIONS, not commands. Nothing calls `applyPainInterrupt()`;
 // the fold recomputes the interrupt state from the log every time it runs. No
@@ -18,7 +18,7 @@ export type InterruptKind = 'none' | 'soft' | 'bone' | 'referral'
 
 export interface InterruptState {
   kind: InterruptKind
-  /** Last forced-rest day, inclusive. Null for a bone interrupt — see below. */
+  /** Last forced-rest day, inclusive. Null for a bone interrupt, see below. */
   restUntil: LocalDate | null
   since: LocalDate | null
   /** Bone branch: consecutive clean days accumulated toward the re-entry gate. */
@@ -38,7 +38,7 @@ const NO_INTERRUPT: InterruptState = {
  * Severity alone is the weakest of the three tests and deliberately not the
  * first. Pain severity correlates poorly with radiological severity in bone
  * stress injury, and it is the one input a motivated 15-year-old can shade
- * downward at no cost — so location and function trigger independently of it.
+ * downward at no cost, so location and function trigger independently of it.
  */
 export function classifyPain(p: PainRecord): InterruptKind {
   // Any pain on a bony landmark, at ANY severity. This is the rule the
@@ -58,8 +58,8 @@ export function classifyPain(p: PainRecord): InterruptKind {
  *
  * The two branches differ in kind, not degree:
  *
- *   soft — a countdown. Muscular, non-bony, resolves on a timer.
- *   bone — NEVER a countdown. A fixed 3-day timer manufactures a false
+ *   soft, a countdown. Muscular, non-bony, resolves on a timer.
+ *   bone. NEVER a countdown. A fixed 3-day timer manufactures a false
  *          "cleared" state when conservative tibial bone stress injury
  *          management runs 6-27 weeks. It exits only on consecutive clean
  *          days, and if it has not cleared within the referral window, or
@@ -111,7 +111,7 @@ export function computeInterrupt(t: Timeline, today: LocalDate): InterruptState 
   if (state.kind === 'soft' && state.restUntil && today > state.restUntil) return { ...NO_INTERRUPT }
   if (state.kind === 'bone' && state.since
       && diffDays(today, state.since) > TUNABLES.PAIN.BONE_REFERRAL_AFTER_DAYS) {
-    return { ...state, kind: 'referral', referralRequired: true, reason: `${state.reason} — not clear after ${TUNABLES.PAIN.BONE_REFERRAL_AFTER_DAYS} days` }
+    return { ...state, kind: 'referral', referralRequired: true, reason: `${state.reason}, not clear after ${TUNABLES.PAIN.BONE_REFERRAL_AFTER_DAYS} days` }
   }
   return state
 }
@@ -132,7 +132,7 @@ export function blocksRunning(state: InterruptState, today: LocalDate): boolean 
 // ── Silence decay ───────────────────────────────────────────
 // Assume-completed is only valid while he is opening the app: opening it and
 // not logging an exception is an implicit confirmation. Once that stops, the
-// engine knows nothing, and "nothing" must not be read as "as prescribed" —
+// engine knows nothing, and "nothing" must not be read as "as prescribed"
 // that path hands a detrained kid week six of the plan.
 
 export interface SilenceState {
@@ -160,8 +160,7 @@ export function computeSilence(t: Timeline, today: LocalDate): SilenceState {
 
 export function computeGateDue(
   t: Timeline,
-  opts: { aboutToRun20Continuous: boolean; aboutToJoinTeam: boolean; interrupt: InterruptState },
-): GateId | null {
+  opts: { aboutToRun20Continuous: boolean; aboutToJoinTeam: boolean; interrupt: InterruptState }): GateId | null {
   if (opts.interrupt.kind !== 'none' && !t.gateAnswers.has('post_pain')) return 'post_pain'
   if (opts.aboutToJoinTeam && !t.gateAnswers.has('pre_team')) return 'pre_team'
   if (opts.aboutToRun20Continuous && !t.gateAnswers.has('pre_20min')) return 'pre_20min'

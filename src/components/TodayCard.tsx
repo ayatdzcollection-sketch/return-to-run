@@ -45,7 +45,7 @@ export function TodayCard({ p, rationale }: { p: Prescription; rationale: string
               hero
             >
               {p.speedCeilingMph === null ? (
-                <span className="text-stone-500">—</span>
+                <span className="text-stone-500">, </span>
               ) : (
                 <>
                   <span className="text-stone-500">≤</span>{' '}

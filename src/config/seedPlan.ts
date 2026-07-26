@@ -1,5 +1,5 @@
 // ============================================================
-// THE LADDER — nine levels from a standing start to 30 minutes continuous.
+// THE LADDER: nine levels from a standing start to 30 minutes continuous.
 //
 // PROVENANCE. The build brief's original ladder was thirteen sessions long.
 // The Stage 0 research pass identified it as GRONORUN's thirteen-WEEK RCT
@@ -29,7 +29,7 @@
 //   - Level 8 trades total volume down for bout length up. That pattern is the
 //     brief's own (its sessions 11-12 did the same) and it is good design.
 //
-// HONEST FRAMING, which the narrative layer must respect: a gradual ladder
+// HONEST FRAMING: which the narrative layer must respect: a gradual ladder
 // builds CAPACITY. It is not proven to prevent injury. Buist 2008 tested a
 // 13-week graded programme against a standard 8-week one in 532 novice runners
 // with this athlete's exact detraining criterion and found injury rates of
@@ -44,7 +44,7 @@ export const WARMUP_WALK_MIN = 5
 export const COOLDOWN_WALK_MIN = 5
 
 export interface Level {
-  /** 1-based. Also the ordering key — levels are climbed one at a time. */
+  /** 1-based. Also the ordering key, levels are climbed one at a time. */
   level: number
   /** The jogging portion. Warm-up and cool-down are added by buildStructure. */
   core: IntervalBlock[]
@@ -59,7 +59,7 @@ export interface Level {
 /**
  * The ladder.
  *
- * Read the `longestBoutMin` column downward — 1, 2, 3, 5, 6, 11, 16, 20, 30 —
+ * Read the `longestBoutMin` column downward, 1, 2, 3, 5, 6, 11, 16, 20, 30
  * and note there is no jump larger than roughly +80% and none at all above
  * level 6. That column, not the jog-minute column, is what the athlete
  * actually has to tolerate in one unbroken piece.
@@ -161,7 +161,7 @@ export function buildStructure(level: Level): IntervalBlock[] {
  * The gate before level 1: pain-free brisk walking for 30 continuous minutes
  * with a normal, non-limping gait.
  *
- * The most consistent prerequisite in the entire return-to-run literature —
+ * The most consistent prerequisite in the entire return-to-run literature
  * Ohio State, CU Sports Medicine and Oxford NHS all require it independently.
  * The build brief had no entry gate at all; it began jogging with no check.
  */

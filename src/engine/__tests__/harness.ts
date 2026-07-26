@@ -1,5 +1,5 @@
-// Test harness: drives the engine the way the app does — issue a prescription,
-// record what happened, fold the whole log again — so the invariant tests
+// Test harness: drives the engine the way the app does, issue a prescription,
+// record what happened, fold the whole log again, so the invariant tests
 // exercise the real path rather than a hand-built state object.
 
 import { computeState, type FoldResult } from '../fold.ts'

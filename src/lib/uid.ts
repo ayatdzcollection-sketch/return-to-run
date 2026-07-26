@@ -1,12 +1,12 @@
 // ============================================================
-// ULID — time-sortable unique event ids.
+// ULID: time-sortable unique event ids.
 //
 // A UUID would be unique but arbitrary; the event log wants ids that sort in
 // creation order, because that is the fold's final tiebreak when two events
 // share a timestamp. ULIDs give both: 48 bits of millisecond timestamp then
 // 80 bits of randomness, Crockford base32, lexicographically ordered.
 //
-// Uniqueness also does the sync layer's deduplication for it — the same event
+// Uniqueness also does the sync layer's deduplication for it, the same event
 // pushed twice collides on primary key and is ignored, which is what makes
 // at-least-once delivery safe.
 // ============================================================

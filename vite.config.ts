@@ -13,8 +13,8 @@ export default defineConfig(({ command, mode }) => ({
     // the network is not assumed. The event log already lives in IndexedDB, so
     // precaching the shell closes the remaining cold-start gap.
     //
-    // manifest: false — public/manifest.json stays the canonical manifest.
-    // injectRegister: null — main.tsx registers the worker itself so a new
+    // manifest: false, public/manifest.json stays the canonical manifest.
+    // injectRegister: null, main.tsx registers the worker itself so a new
     // deploy applies on the next reload rather than the one after it.
     VitePWA({
       registerType: 'autoUpdate',

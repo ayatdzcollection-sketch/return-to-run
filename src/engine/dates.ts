@@ -1,10 +1,10 @@
 // ============================================================
-// CALENDAR ARITHMETIC — pure integer math, no `Date` anywhere.
+// CALENDAR ARITHMETIC: pure integer math, no `Date` anywhere.
 //
 // The engine must be replayable: given the same event log and the same
 // `today`, it must produce the same prescription on any device, in any
 // timezone, at any wall-clock moment. Reading a clock inside the engine
-// would break that, so the engine never does — `today` is always passed in
+// would break that, so the engine never does, `today` is always passed in
 // from src/lib/clock.ts, which is the only file in the codebase permitted
 // to touch `Date`.
 //
@@ -24,7 +24,7 @@
  * A calendar day in the athlete's own local timezone, 'YYYY-MM-DD'.
  *
  * Branded so a raw string can't be passed where a validated date is expected.
- * Events carry the local date stamped at creation and the engine trusts it —
+ * Events carry the local date stamped at creation and the engine trusts it
  * it never re-derives a date from a timestamp, so a device travelling across
  * a timezone can't silently reassign a session to a different day.
  */

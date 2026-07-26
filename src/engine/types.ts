@@ -1,18 +1,18 @@
 // ============================================================
-// DOMAIN TYPES — the contracts every other engine module compiles against.
+// DOMAIN TYPES: the contracts every other engine module compiles against.
 //
 // Two rules shape everything in this file:
 //
 //   1. MINUTES ARE THE UNIT (invariant 1). There is no distance field on any
 //      prescription, any event, or any state value. Treadmill belt calibration
 //      is unreliable and this athlete's speed is derived from a talk test, not
-//      measured — so distance is not merely untrusted, it is absent. If you
+//      measured, so distance is not merely untrusted, it is absent. If you
 //      find yourself wanting to add one, the answer is no.
 //
 //   2. THE LOG IS THE TRUTH. Every value in AthleteState is computed by folding
 //      events (see fold.ts). Nothing here is written by hand or persisted as
 //      mutable state. Interrupts, decay, and ceiling changes are DERIVATIONS,
-//      not commands — which is what makes them impossible to forget or to
+//      not commands, which is what makes them impossible to forget or to
 //      apply twice.
 // ============================================================
 
@@ -105,7 +105,7 @@ export type PrescriptionKind =
 /**
  * One cap that was consulted while building a prescription.
  *
- * Every clamp is recorded with the value it replaced — invariant 7 requires it
+ * Every clamp is recorded with the value it replaced, invariant 7 requires it
  * for ACWR specifically, and there is no reason the other caps should be less
  * auditable. `audit.binding` names the single rule that actually determined
  * the final number, which is what the rationale sentence is built from.
@@ -119,7 +119,7 @@ export interface CapRecord {
 
 export interface PrescriptionAudit {
   caps: CapRecord[]
-  /** The rule that bound — i.e. produced the lowest value. Null when nothing capped. */
+  /** The rule that bound, i.e. produced the lowest value. Null when nothing capped. */
   binding: string | null
 }
 
@@ -132,7 +132,7 @@ export interface Prescription {
   structure: IntervalBlock[]
   /** Jogging minutes only. Walking is not load. Invariant 1. */
   plannedJogMin: number
-  /** Everything including walk portions — what the session costs in wall time. */
+  /** Everything including walk portions, what the session costs in wall time. */
   plannedTotalMin: number
   /**
    * The belt speed. `ceiling` is the control (invariant 11) and is what the UI
@@ -145,7 +145,7 @@ export interface Prescription {
   /**
    * Empirical easy-HR ceiling, or null when there is no device, no calibration
    * yet, or HR is not trustworthy. NEVER derived from a maximum heart rate
-   * (invariant 13) — it is measured at the talk-test speed and then truncated.
+   * (invariant 13), it is measured at the talk-test speed and then truncated.
    * Not applied to P4 interval reps (HR lags effort; see brief §8).
    */
   hrCeiling: number | null
@@ -158,7 +158,7 @@ export interface Prescription {
 
 // ── Rationale codes ─────────────────────────────────────────
 // The narrative layer maps these to sentences (src/lib/narrative.ts). The
-// engine only ever emits a code — it never writes prose, and prose never
+// engine only ever emits a code, it never writes prose, and prose never
 // feeds back into state (brief §15).
 export const RATIONALE_CODES = [
   'seed_prior',
@@ -195,7 +195,7 @@ export type RationaleCode = (typeof RATIONALE_CODES)[number]
 // resolution at all.
 
 export interface EventBase {
-  /** ULID — globally unique and lexicographically time-ordered. */
+  /** ULID, globally unique and lexicographically time-ordered. */
   id: string
   /** ISO datetime with offset, device wall clock at creation. Audit + tiebreak. */
   at: string
@@ -248,7 +248,7 @@ export type AppEvent = EventBase &
     | { type: 'probe_result'; fixedSpeedMph: number; rpe: number; hrAtMin5: number | null }
     /**
      * The reduced output of the HR quality pipeline for one session. Raw samples
-     * live in a side store and never enter the fold — thousands of rows per run
+     * live in a side store and never enter the fold, thousands of rows per run
      * would swamp it, and the fold only needs the conclusions.
      */
     | {
@@ -289,8 +289,7 @@ export type EventDraft<T = AppEvent> = T extends AppEvent
 /** Narrowing helper: `isEvent(e, 'pain_reported')` gives the full payload type. */
 export function isEvent<T extends AppEventType>(
   e: AppEvent,
-  type: T,
-): e is Extract<AppEvent, { type: T }> {
+  type: T): e is Extract<AppEvent, { type: T }> {
   return e.type === type
 }
 

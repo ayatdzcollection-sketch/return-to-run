@@ -1,11 +1,11 @@
 // ============================================================
-// THE EVENT LOG — append only.
+// THE EVENT LOG: append only.
 //
 // This module deliberately exports no way to update or delete an event. That
 // is the local half of the append-only guarantee (the other half is a Postgres
 // trigger on the mirror; see supabase/migration-001-event-log.sql). If a
 // correction is ever needed, the answer is to append a correcting event, not
-// to edit history — the fold's job is to reconcile them.
+// to edit history, the fold's job is to reconcile them.
 //
 // storage.test.ts asserts the export surface, so adding a mutation function
 // here fails the suite rather than quietly weakening the model.
@@ -49,7 +49,7 @@ export async function countEvents(): Promise<number> {
   return count(STORE_EVENTS)
 }
 
-/** Raw HR samples. Audit trail only — these never reach the fold. */
+/** Raw HR samples. Audit trail only, these never reach the fold. */
 export async function appendHrSamples(samples: readonly RawHrSample[]): Promise<number> {
   let added = 0
   for (const s of samples) {

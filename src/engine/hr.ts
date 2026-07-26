@@ -1,5 +1,5 @@
 // ============================================================
-// HEART RATE — a corroborating signal, never a governor.
+// HEART RATE: a corroborating signal, never a governor.
 //
 // Everything here exists because the device is a budget wrist optical sensor
 // and the athlete lives, for two months, in exactly the band where such
@@ -9,7 +9,7 @@
 // The failure mode that shapes this module is CADENCE LOCK: accelerometer-
 // referenced artifact cancellation works by finding the accelerometer's
 // dominant spectral peak and suppressing the matching peak in the optical
-// signal — so when cadence and heart rate share a frequency, the peak to
+// signal, so when cadence and heart rate share a frequency, the peak to
 // suppress and the peak to keep are the same peak, and the algorithm must
 // guess. It often guesses cadence.
 //
@@ -44,7 +44,7 @@ export interface HrSummaryDraft {
   keptCount: number
   discardedPct: number
   confidence: HrConfidence
-  /** Samples merely coincident with cadence — down-weighted, not dropped. */
+  /** Samples merely coincident with cadence, down-weighted, not dropped. */
   suspectPct: number
   reasons: DiscardReason[]
 }
@@ -58,7 +58,7 @@ const EMPTY: HrSummaryDraft = {
  * Reduce a session's raw samples to the handful of numbers the fold needs.
  *
  * Pure and side-effect free: the caller wraps the result in an `hr_summary`
- * event. Raw samples never enter the fold — thousands of rows per run would
+ * event. Raw samples never enter the fold, thousands of rows per run would
  * swamp it, and the fold only needs conclusions.
  */
 export function evaluateHrSamples(samples: readonly RawHrSample[]): HrSummaryDraft {
@@ -81,7 +81,7 @@ export function evaluateHrSamples(samples: readonly RawHrSample[]): HrSummaryDra
     // reads as suspiciously easy.
     if (s.cadenceSpm !== null && matchesCadence(s.bpm, s.cadenceSpm)) suspect++
 
-    // THE TRANSITION TEST — the primary discriminating evidence. Heart rate has
+    // THE TRANSITION TEST: the primary discriminating evidence. Heart rate has
     // a 20-30 second time constant and physically cannot step; cadence follows
     // a belt change within one or two strides. A jump this fast, coincident
     // with a speed change, is the sensor tracking the treadmill.
@@ -189,7 +189,7 @@ export interface DriftInput {
 /**
  * Was the pace too fast, or was it just warm?
  *
- * Heart rate cannot answer that on its own — it is the summed output of
+ * Heart rate cannot answer that on its own, it is the summed output of
  * metabolic and thermoregulatory demand, and at 35 C it rises 11% from minute
  * 15 to 45 at a CONSTANT work rate versus 2% at 22 C. At this athlete's working
  * heart rate that is roughly 16 bpm of purely heat-driven drift, which would
@@ -214,15 +214,14 @@ export function evaluateDrift(inp: DriftInput): DriftVerdict {
   if (rise <= 0) return 'no_drift'
   // Onset timing is the real discriminator. On a run short enough that
   // thermoregulatory drift has not begun, any meaningful rise means he never
-  // reached steady state — i.e. the pace was above easy from the start.
+  // reached steady state, i.e. the pace was above easy from the start.
   if (rise > threshold) return 'too_fast'
   return 'expected_drift'
 }
 
 /** Did HR exceed the easy ceiling while the belt was at the prescribed speed? */
 export function breachedCeiling(
-  meanFirst20: number | null, ceiling: number | null, confidence: HrConfidence,
-): boolean {
+  meanFirst20: number | null, ceiling: number | null, confidence: HrConfidence): boolean {
   // The ceiling applies to the first 20 minutes only. Beyond that, cardiac
   // drift of 5-10 bpm at constant pace is expected and is not a breach.
   if (ceiling === null || meanFirst20 === null || confidence !== 'usable') return false

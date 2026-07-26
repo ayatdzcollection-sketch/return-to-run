@@ -1,5 +1,5 @@
 // ============================================================
-// MIRROR SYNC — offline-first, at-least-once, no conflict resolution.
+// MIRROR SYNC: offline-first, at-least-once, no conflict resolution.
 //
 // There is no merge algorithm here, and that is not an omission. The event log
 // is a grow-only set and the fold sorts before it reduces, so the state derived
@@ -8,7 +8,7 @@
 // what we lack, and let duplicate ids collide harmlessly on the primary key.
 //
 // The earlier engine needed a real state-merge routine because it stored a
-// mutable snapshot. Event sourcing deletes that entire class of problem — which
+// mutable snapshot. Event sourcing deletes that entire class of problem, which
 // is most of why it was worth the change.
 // ============================================================
 
@@ -119,7 +119,7 @@ export async function pendingCount(): Promise<number> {
  *
  * This is the answer to iOS evicting the app's storage: if the phone's log is
  * short, the mirror still has the history, and a full re-pull rebuilds state
- * exactly — because the log IS the state. Surfaced in the UI rather than fixed
+ * exactly, because the log IS the state. Surfaced in the UI rather than fixed
  * silently, since a mismatch is worth knowing about.
  */
 export async function durabilityCheck(): Promise<{ local: number; remote: number | null }> {

@@ -1,10 +1,10 @@
 // ============================================================
-// THE NARRATIVE LAYER — one sentence under each session.
+// THE NARRATIVE LAYER: one sentence under each session.
 //
 // Deterministic templates keyed by rationale code. No API key, no proxy, no
 // network dependency: this works in a basement with no signal, which is where
 // the treadmill is. FLAGS.LLM_NARRATIVE is off and the upgrade path, if ever
-// taken, is a server-side proxy — never a client-side key.
+// taken, is a server-side proxy, never a client-side key.
 //
 // TWO HARD RULES ON WHAT THIS MAY SAY:
 //
@@ -34,7 +34,7 @@ const TEMPLATES: Record<RationaleCode, Template> = {
     'Starting point, before the app knows anything about you. It will adjust from what you actually do.',
 
   calibration_discovery: () =>
-    'Find the speed where your breathing first changes — not where you run out of breath. Read the passage out loud, at normal volume, every step.',
+    'Find the speed where your breathing first changes, not where you run out of breath. Read the passage out loud, at normal volume, every step.',
 
   calibration_observation: () =>
     'Same speed every time this week. The app is watching how you recover, not how fast you go.',
@@ -43,7 +43,7 @@ const TEMPLATES: Record<RationaleCode, Template> = {
     'Same length as last time. Consistency first.',
 
   progression_duration: ({ prescription }) =>
-    `${fmt(prescription.plannedJogMin)} minutes of jogging today — a small step up from where you have been.`,
+    `${fmt(prescription.plannedJogMin)} minutes of jogging today, a small step up from where you have been.`,
 
   progression_continuity: ({ prescription }) =>
     `Same total as before, but held together for longer: ${fmt(longestBout(prescription))} minutes unbroken.`,
@@ -67,7 +67,7 @@ const TEMPLATES: Record<RationaleCode, Template> = {
     'Shorter because you are outside now. Outdoors is a different job for your legs than a belt is, even at the same pace.',
 
   down_week: ({ weekNumber }) =>
-    `Week ${weekNumber} is a down week. Less this week, on purpose — it is not a setback and it is not optional.`,
+    `Week ${weekNumber} is a down week. Less this week, on purpose, it is not a setback and it is not optional.`,
 
   forced_rest_pain: () =>
     'No running. Pain in that spot is the one signal the app will not let you talk it out of.',
@@ -94,13 +94,13 @@ const TEMPLATES: Record<RationaleCode, Template> = {
     'One question before today’s session.',
 
   ceiling_lowered_drift: () =>
-    'Speed ceiling came down. Your heart rate drifted up at a steady pace twice — that usually means the pace was above easy, whatever it felt like.',
+    'Speed ceiling came down. Your heart rate drifted up at a steady pace twice, that usually means the pace was above easy, whatever it felt like.',
 
   ceiling_lowered_hr_breach: () =>
     'Speed ceiling came down. Your heart rate ran above your easy ceiling at the prescribed pace.',
 
   ceiling_raised_probe: () =>
-    'Speed ceiling went up a notch — your heart rate at the check speed has fallen two weeks running. That is the only thing that moves it up.',
+    'Speed ceiling went up a notch, your heart rate at the check speed has fallen two weeks running. That is the only thing that moves it up.',
 }
 
 /** The sentence shown under today's session. */
@@ -121,12 +121,12 @@ export const SETUP_NOTICES = [
   {
     id: 'fan',
     title: 'Point a fan at yourself',
-    body: 'Running indoors with no airflow, you lose almost all of your cooling. In the lab this cut time-to-exhaustion by about 40%. Any household fan does it — but turn it on before you start, not once you are hot.',
+    body: 'Running indoors with no airflow, you lose almost all of your cooling. In the lab this cut time-to-exhaustion by about 40%. Any household fan does it, but turn it on before you start, not once you are hot.',
   },
   {
     id: 'watch_position',
     title: 'Wear the watch up your forearm',
-    body: 'Two or three finger-widths above the wrist bone, on the muscle. That single change cuts heart-rate error by roughly half during running — more than any setting in this app.',
+    body: 'Two or three finger-widths above the wrist bone, on the muscle. That single change cuts heart-rate error by roughly half during running, more than any setting in this app.',
   },
   {
     id: 'entry_gate',

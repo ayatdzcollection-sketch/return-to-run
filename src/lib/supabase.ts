@@ -4,7 +4,7 @@ const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
 /**
- * Null when the env vars are absent — the app then runs local-only, with the
+ * Null when the env vars are absent, the app then runs local-only, with the
  * event log living entirely in IndexedDB on the device. Everything works; there
  * is simply no mirror, which the sync badge says out loud rather than hiding.
  *

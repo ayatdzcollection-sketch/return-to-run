@@ -1,5 +1,5 @@
 -- ============================================================
--- Return-to-Run — event log mirror.
+-- Return-to-Run, event log mirror.
 --
 -- Run this ONCE in the Supabase SQL editor. It is the only manual setup step;
 -- the app itself never issues DDL, and deliberately holds no privilege that
@@ -59,7 +59,7 @@ drop policy if exists "rtr_event select" on public.rtr_event;
 create policy "rtr_event select" on public.rtr_event for select using (true);
 
 -- ── Raw heart-rate samples (audit only) ─────────────────────
--- These never enter the fold — a pure pipeline reduces each session's samples
+-- These never enter the fold, a pure pipeline reduces each session's samples
 -- to one hr_summary event, and only that event affects state. They are kept so
 -- a suspicious ceiling can be re-derived from the original signal later.
 create table if not exists public.rtr_hr_sample (
@@ -94,6 +94,6 @@ create policy "rtr_hr_sample select" on public.rtr_hr_sample for select using (t
 --   update public.rtr_event set type = 'tampered' where id = 'TEST';
 --   delete from public.rtr_event where id = 'TEST';
 --
--- The TEST row cannot be deleted afterwards — that is the point. It is inert:
+-- The TEST row cannot be deleted afterwards, that is the point. It is inert:
 -- it belongs to access code 'verify', which no device uses.
 -- ============================================================

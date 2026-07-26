@@ -1,11 +1,11 @@
 // ============================================================
-// APP OPENS — load-bearing, not analytics.
+// APP OPENS: load-bearing, not analytics.
 //
 // The reporting model assumes a prescribed session was completed unless told
 // otherwise. That assumption is only valid while he is OPENING the app:
 // opening it and not logging an exception is an implicit confirmation. Once
 // the opens stop, the engine knows nothing, and "nothing" must not be read as
-// "as prescribed" — that path quietly hands a detrained kid week six of the
+// "as prescribed". That path quietly hands a detrained kid week six of the
 // plan. Hence this table, and hence the silence decay that reads it.
 // ============================================================
 

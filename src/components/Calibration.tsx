@@ -4,7 +4,7 @@
 //
 // 1. The stop criterion is the FIRST CHANGE IN BREATHING, not loss of speech.
 //    The talk test's "cannot speak comfortably" stage corresponds to the
-//    SECOND ventilatory threshold, not the first — 93% of VO2peak versus 77%.
+//    SECOND ventilatory threshold, not the first, 93% of VO2peak versus 77%.
 //    Asked naively, "can you still talk?" finds threshold and calls it easy.
 // 2. The passage must be read ALOUD. Reciting it silently or under the breath
 //    permits a much higher intensity, and the original authors name this as the
@@ -36,7 +36,7 @@ export function CalibrationWizard({ onDone }: {
   if (!started) {
     return (
       <div className="px-6 py-8">
-        <div className="label">Session 1 — find your speed</div>
+        <div className="label">Session 1, find your speed</div>
         <h2 className="mt-3 text-2xl font-semibold leading-snug">Walk briskly for 5 minutes first.</h2>
         <div className="mt-6 space-y-4 text-[0.98rem] leading-relaxed text-stone-400">
           <p>
@@ -49,7 +49,7 @@ export function CalibrationWizard({ onDone }: {
             put your ceiling too high, and you’ll be training too hard for weeks without knowing.
           </p>
           <p>
-            <strong className="text-stone-100">Stop at the first of these</strong> — not the last:
+            <strong className="text-stone-100">Stop at the first of these</strong>, not the last:
           </p>
           <ul className="list-disc space-y-1.5 pl-5">
             <li>you take an extra breath in the middle of a sentence</li>
@@ -100,17 +100,17 @@ export function CalibrationWizard({ onDone }: {
           inputMode="numeric"
           value={hr}
           onChange={(e) => setHr(e.target.value.replace(/\D/g, '').slice(0, 3))}
-          placeholder="—"
+          placeholder=", "
           className="numeral mt-2 w-full rounded-xl border border-stone-800 bg-stone-900/60 px-4 py-3 text-3xl text-stone-100 placeholder:text-stone-700"
         />
       </label>
 
       <div className="mt-8 space-y-3">
         <button className="btn-quiet" onClick={() => record(true)}>
-          My breathing just changed — stop here
+          My breathing just changed, stop here
         </button>
         <button className="btn-primary" onClick={() => record(false)}>
-          Still easy — next step
+          Still easy, next step
         </button>
       </div>
     </div>

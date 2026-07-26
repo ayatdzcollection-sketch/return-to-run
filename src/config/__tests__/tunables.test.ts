@@ -41,7 +41,7 @@ describe('every tunable carries evidence', () => {
 describe('the values the research pass changed stay changed', () => {
   // These are the amendments where the brief and the evidence disagreed. If
   // someone reverts one to the brief's value, that is a decision worth making
-  // deliberately — so it breaks a test rather than passing silently.
+  // deliberately, so it breaks a test rather than passing silently.
 
   it('subtracts 1.0 mph from the talk test, not 0.4', () => {
     // 0.4 was below the instrument's own minimal detectable change (~0.9 mph).

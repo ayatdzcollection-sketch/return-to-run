@@ -96,7 +96,7 @@ describe('twelve weeks, day by day, with the rails asserted every day', () => {
       }
 
       if (i === 30) {
-        // Calf pain at 4/10 — muscular, so the soft branch.
+        // Calf pain at 4/10, muscular, so the soft branch.
         sim.pain(day, 'calf', 4)
         sim.answerGate(addDays(day, 1), 'post_pain')
         continue
@@ -162,10 +162,8 @@ describe('properties that must hold for any log the engine can produce', () => {
             }
           }
           return true
-        },
-      ),
-      { numRuns: 30 },
-    )
+        }),
+      { numRuns: 30 })
   })
 
   it('never raises a ceiling without probe evidence, whatever he reports', () => {
@@ -186,9 +184,7 @@ describe('properties that must hold for any log the engine can produce', () => {
           // Feeling good is not evidence. Only two weeks of falling probe HR is.
           expect(after).toBeLessThanOrEqual(base)
           return true
-        },
-      ),
-      { numRuns: 30 },
-    )
+        }),
+      { numRuns: 30 })
   })
 })

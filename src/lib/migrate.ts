@@ -1,5 +1,5 @@
 // ============================================================
-// SCHEMA MIGRATION — on read, never in place.
+// SCHEMA MIGRATION: on read, never in place.
 //
 // Rewriting stored events to a new shape would violate the append-only rule
 // that the whole model rests on, so migration happens when an event is loaded.
@@ -21,7 +21,7 @@ export const LOCAL_SCHEMA_VERSION = 1
 /**
  * Bring one stored event up to the current schema.
  *
- * Version 1 is the initial shape, so there is nothing to upgrade yet — the
+ * Version 1 is the initial shape, so there is nothing to upgrade yet, the
  * function exists so that the call site is already correct when there is.
  */
 export function migrateEvent(event: AppEvent): AppEvent {

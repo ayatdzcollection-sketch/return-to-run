@@ -67,7 +67,7 @@ function CutShort({ planned, onSubmit, onClose }: { planned: number; onSubmit: (
     .filter((n) => n < planned)
   return (
     <Sheet title="How much did you run" onClose={onClose}>
-      <p className="mb-5 text-stone-400">Jogging minutes only — walking doesn’t count.</p>
+      <p className="mb-5 text-stone-400">Jogging minutes only, walking doesn’t count.</p>
       <div className="space-y-3">
         {options.map((m) => (
           <button key={m} className="btn-option numeral text-2xl" onClick={() => onSubmit(m)}>
@@ -153,7 +153,7 @@ function PainForm({ onSubmit, onClose }: { onSubmit: (c: WrongChoice) => void; o
 const GATE_COPY: Record<GateId, { title: string; question: string; body: string }> = {
   pre_20min: {
     title: 'Before your first 20-minute run',
-    question: 'Have your legs felt normal after the last few runs — no ache that lasted into the next day?',
+    question: 'Have your legs felt normal after the last few runs, no ache that lasted into the next day?',
     body: 'Twenty unbroken minutes is a real step up. This is the one time the app asks before letting you take it.',
   },
   pre_team: {
@@ -177,7 +177,7 @@ export function GateQuestion({ gate, onAnswer }: { gate: GateId; onAnswer: (yes:
       <p className="mt-4 text-[0.95rem] leading-relaxed text-stone-400">{copy.body}</p>
       <div className="mt-10 space-y-3">
         <button className="btn-primary" onClick={() => onAnswer(true)}>Yes</button>
-        <button className="btn-quiet" onClick={() => onAnswer(false)}>No — not yet</button>
+        <button className="btn-quiet" onClick={() => onAnswer(false)}>No, not yet</button>
       </div>
     </div>
   )

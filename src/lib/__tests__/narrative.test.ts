@@ -38,7 +38,7 @@ describe('the narrative layer', () => {
 
     // Sentence by sentence, because the app is REQUIRED to say the negated
     // form somewhere ("not proven to prevent injury"). What must not appear is
-    // the claim asserted — i.e. prevention and injury in one sentence with no
+    // the claim asserted, i.e. prevention and injury in one sentence with no
     // negation carrying it.
     for (const sentence of all.split(/(?<=[.!?])\s+/)) {
       const s = sentence.toLowerCase()

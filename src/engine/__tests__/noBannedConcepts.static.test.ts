@@ -6,7 +6,7 @@
 //
 // A rule that lives only in a design document gets violated the first time
 // somebody needs a percentage. So this test reads the actual source and fails
-// if the concept appears at all — in any file, in any form, including a
+// if the concept appears at all, in any file, in any form, including a
 // helper someone adds in six months without reading the brief.
 //
 // It also enforces the engine's purity boundary, which is what makes every
@@ -43,13 +43,13 @@ function walk(dir: string, out: string[] = []): string[] {
  *
  * Both bans below are about what the code DOES. A comment explaining why max
  * heart rate is forbidden, or an evidence citation quoting a study that
- * measured one, is documentation — this file's own header does exactly that.
+ * measured one, is documentation, this file's own header does exactly that.
  * Emptying string bodies (while keeping their delimiters, so the surrounding
  * syntax still parses) lets the tunables register cite real sources without
  * tripping its own guard.
  *
  * The gap this leaves is bracket access built from a string literal, e.g.
- * `state['max_hr']`. That is not a realistic way to write the offending code —
+ * `state['max_hr']`. That is not a realistic way to write the offending code
  * every plausible form (`const maxHr =`, `hrMax()`, `220 - age`) is an
  * identifier or arithmetic and is still caught.
  *
@@ -93,7 +93,7 @@ function stripComments(src: string): string {
 }
 
 /**
- * Load the SHIPPED source of a subtree — test files are excluded.
+ * Load the SHIPPED source of a subtree, test files are excluded.
  *
  * Scope is deliberate. What must not contain a max-HR concept is the code that
  * reaches the athlete's phone; a test naming the banned idea in an assertion
@@ -135,7 +135,7 @@ describe('I13: no maximum-heart-rate concept exists anywhere in the codebase', (
 
   // Each pattern is a different way the concept sneaks in: a named variable, a
   // formula, or a derived zone model. The empirical easy-HR ceiling this engine
-  // does use is measured at the talk-test speed and truncated by a constant —
+  // does use is measured at the talk-test speed and truncated by a constant
   // it is never a percentage of anything.
   const BANNED: { name: string; pattern: RegExp }[] = [
     { name: 'max heart rate / maxHr identifier', pattern: /\bmax[_\s-]*(heart|hr)\b/i },

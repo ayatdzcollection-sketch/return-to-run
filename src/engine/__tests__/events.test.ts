@@ -65,7 +65,7 @@ describe('structure arithmetic', () => {
     expect(flattenBlocks(seedSession1)).toHaveLength(1 + 16 + 1)
   })
 
-  it('counts jogging minutes only — walking is not load (I1)', () => {
+  it('counts jogging minutes only, walking is not load (I1)', () => {
     expect(jogMinutes(seedSession1)).toBe(8)
     expect(totalMinutes(seedSession1)).toBe(5 + 8 * 3 + 5)
   })

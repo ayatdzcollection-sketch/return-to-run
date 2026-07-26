@@ -1,7 +1,7 @@
 // Behind one tap: the week, the phase, the probe chart, and the audit trail.
 //
 // Nothing here is a dashboard. There are no streaks, no badges and no totals to
-// chase — the numbers exist so that a decision the engine made can be checked,
+// chase, the numbers exist so that a decision the engine made can be checked,
 // not so that a teenager can optimise against them.
 
 import type { FoldResult } from '../engine/fold.ts'
@@ -37,7 +37,7 @@ export function DetailView({ state, week, onClose }: {
           <div className="label">phase</div>
           <div className="mt-1.5 text-xl font-semibold">{PHASE_LABEL[state.phase] ?? state.phase}</div>
           <div className="mt-1 text-sm text-stone-500">
-            Step {state.level} of {TOP_LEVEL} — {levelAt(state.level).label}
+            Step {state.level} of {TOP_LEVEL}, {levelAt(state.level).label}
           </div>
         </section>
 
@@ -70,13 +70,13 @@ export function DetailView({ state, week, onClose }: {
 
         {probes.length > 1 && (
           <section>
-            <div className="label">monday check — same speed every week</div>
+            <div className="label">monday check, same speed every week</div>
             <ProbeChart
               points={probes.map((p) => ({ hr: p.probe!.hrAtMin5, rpe: p.probe!.rpe }))}
             />
             <p className="mt-3 text-xs leading-relaxed text-stone-600">
               Falling at a fixed speed is the only thing that raises your ceiling.
-              {state.probeStagnantFlag && ' Flat for three weeks — worth checking sleep and how much you’re eating.'}
+              {state.probeStagnantFlag && ' Flat for three weeks, worth checking sleep and how much you’re eating.'}
             </p>
           </section>
         )}

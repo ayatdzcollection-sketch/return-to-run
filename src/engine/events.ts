@@ -1,5 +1,5 @@
 // ============================================================
-// EVENT UTILITIES — ordering, deduplication, and structure arithmetic.
+// EVENT UTILITIES: ordering, deduplication, and structure arithmetic.
 //
 // The fold sorts before it reduces, so the same set of events produces the
 // same state no matter what order they arrived in. That is what lets two
@@ -22,8 +22,7 @@ export function sortEvents(events: readonly AppEvent[]): AppEvent[] {
   return [...events].sort(
     (a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0)
       || (a.at < b.at ? -1 : a.at > b.at ? 1 : 0)
-      || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
-  )
+      || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
 }
 
 /** Drop exact duplicates by id. Sync is at-least-once, so this is routine. */
@@ -72,7 +71,7 @@ function blockTotalMinutes(b: SimpleBlock): number {
   return b.kind === 'walk' ? b.minutes : blockJogMinutes(b)
 }
 
-/** Running minutes. THE load number — this is what every cap is applied to. */
+/** Running minutes. THE load number, this is what every cap is applied to. */
 export function jogMinutes(blocks: readonly IntervalBlock[]): number {
   return round1(flattenBlocks(blocks).reduce((n, b) => n + blockJogMinutes(b), 0))
 }

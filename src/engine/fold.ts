@@ -1,5 +1,5 @@
 // ============================================================
-// THE FOLD — events in, athlete state out. Nothing is ever stored.
+// THE FOLD: events in, athlete state out. Nothing is ever stored.
 //
 // computeState(events, today) is a pure function. The same log and the same
 // date produce the same state on any device, in any timezone, at any hour.
@@ -79,7 +79,7 @@ export function computeState(events: readonly import('./types.ts').AppEvent[], t
   })
 
   // Phases fall freely. A pain interrupt drops one; so does going silent. Both
-  // are derived, so neither can be skipped by not opening the app — which is
+  // are derived, so neither can be skipped by not opening the app, which is
   // precisely the case the silence rule exists for.
   if (interrupted) { phase = demote(phase); audit.notes.push(`phase demoted: ${interrupt.reason}`) }
   if (silence.decayed) { phase = demote(phase); audit.notes.push(`phase demoted: ${silence.daysSinceOpen} days without opening the app`) }
@@ -105,14 +105,14 @@ export function computeState(events: readonly import('./types.ts').AppEvent[], t
     })
   }
   if (hrCeilingRaw.rejected && cal.hrAtTalkSpeed !== null) {
-    audit.notes.push(`HR of ${cal.hrAtTalkSpeed} at talk-test speed is outside the plausible band — treated as sensor error, not accepted`)
+    audit.notes.push(`HR of ${cal.hrAtTalkSpeed} at talk-test speed is outside the plausible band, treated as sensor error, not accepted`)
   }
 
   // ── Ceilings: ratchet down freely, rise only on probe evidence ──
   const probe = computeProbe(t, today)
   const { driftEvents, ceilingBreaches } = countBreaches(t, hrCeilingRaw.ceiling)
   // Two different signals with two different urgencies. Aerobic drift is
-  // inferential — it says the pace was probably above easy — so it takes two
+  // inferential, it says the pace was probably above easy, so it takes two
   // occurrences. A ceiling breach is direct: his measured easy ceiling was
   // exceeded while the belt sat at the prescribed speed, which means the speed
   // is wrong now, not eventually.
@@ -211,8 +211,7 @@ export function isBlocked(state: FoldResult): boolean {
   if (state.gateDue !== null) return true
   return blocksRunning(
     { kind: state.interruptKind, restUntil: state.forcedRestUntil, since: null, cleanDays: 0, referralRequired: state.referralRequired, reason: state.interruptReason },
-    state.today,
-  )
+    state.today)
 }
 
 function latestHrConfidence(t: Timeline): HrConfidence {

@@ -1,5 +1,5 @@
 // ============================================================
-// PHASES — P0 through P4, and the ladder position inside them.
+// PHASES. P0 through P4, and the ladder position inside them.
 //
 // Phases move DOWN freely and UP only through gates. Every gate below is a
 // demonstration of capability, never an elapsed-time check: he reaches P2 by

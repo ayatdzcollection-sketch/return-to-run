@@ -21,7 +21,7 @@ const NOTICES_KEY = 'rtr_setup_seen'
 export default function App() {
   const [events, setEvents] = useState<AppEvent[] | null>(null)
   // `?date=YYYY-MM-DD` in dev only, so a rest day does not block checking what
-  // a running session looks like. Stripped from production builds entirely —
+  // a running session looks like. Stripped from production builds entirely
   // the engine takes `today` as a parameter precisely so this costs nothing.
   const [today] = useState(() => {
     if (import.meta.env.DEV) {
@@ -65,8 +65,7 @@ export default function App() {
 
   const state: FoldResult | null = useMemo(
     () => (events === null ? null : computeState(events, today)),
-    [events, today],
-  )
+    [events, today])
 
   const todays: Prescription | null = useMemo(() => {
     if (!state) return null

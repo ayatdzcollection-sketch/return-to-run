@@ -107,7 +107,7 @@ describe('windows', () => {
   })
 
   it('builds a trailing window that includes today', () => {
-    // A 7-day acute window is today plus the six days before it — not eight days.
+    // A 7-day acute window is today plus the six days before it, not eight days.
     const w = trailingWindow(d('2026-08-10'), 7)
     expect(w).toEqual({ start: '2026-08-04', end: '2026-08-10' })
     expect(datesBetween(w.start, w.end)).toHaveLength(7)

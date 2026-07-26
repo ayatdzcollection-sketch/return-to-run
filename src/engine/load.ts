@@ -1,11 +1,11 @@
 // ============================================================
-// LOAD — how much running has happened, and how much is allowed next.
+// LOAD: how much running has happened, and how much is allowed next.
 //
 // THE ACWR CLAMP IS DELIBERATELY ABSENT. It is not disabled, not set to a wide
 // band, not computed for display. The research pass found it contradicted in
 // DIRECTION in both prospective running cohorts that tested it, null in its one
 // adolescent RCT, arithmetically undefined at a 12-month-detrained baseline,
-// and — worst — that its 0.8 lower bound would instruct this athlete to train
+// and, worst, that its 0.8 lower bound would instruct this athlete to train
 // MORE in order to satisfy a metric. See RESEARCH.md §A6.
 //
 // What replaces it is a per-session cap against the longest session of the
@@ -90,7 +90,7 @@ export interface CapResult {
 /**
  * Apply every load ceiling and return the smallest survivor.
  *
- * Each cap is recorded with the value it replaced, whether or not it bound —
+ * Each cap is recorded with the value it replaced, whether or not it bound
  * invariant 7 required that only for ACWR, and there is no reason the rest
  * should be less auditable. `binding` names the one that actually decided the
  * number, which is what the rationale sentence is built from.
@@ -141,21 +141,20 @@ export function applyLoadCaps(ctx: CapContext): CapResult {
     clamp('high_risk_window', damped, `week ${weekNumber} of the elevated-risk window`)
   }
 
-  // 5. Secondary weekly cap. Cheap insurance only — no weekly-level signal was
+  // 5. Secondary weekly cap. Cheap insurance only, no weekly-level signal was
   //    found in this athlete's own population, so it must never be presented as
   //    evidence-based and never overrides the session cap.
   const base = windows.lastBuildWeekMin
   if (base !== null && base > 0) {
     const weeklyAllowance = Math.min(
       base * TUNABLES.LOAD.WEEKLY_GROWTH_MAX,
-      base + TUNABLES.LOAD.WEEKLY_ABS_INCREASE_MAX_MIN,
-    ) * toleranceFactor
+      base + TUNABLES.LOAD.WEEKLY_ABS_INCREASE_MAX_MIN) * toleranceFactor
     const remaining = Math.max(0, weeklyAllowance - windows.thisWeekMin)
     clamp('weekly_cap', remaining, `week allowance ${round1(weeklyAllowance)} min, ${windows.thisWeekMin} used`)
   }
 
   // 6. Down week. Not skippable, not deferrable, and tolerance class does not
-  //    exempt it — `aggressive` buys earlier gates, never more volume.
+  //    exempt it, `aggressive` buys earlier gates, never more volume.
   if (isDownWeek) {
     clamp('down_week', desiredJogMin * (1 - TUNABLES.DOWN_WEEK.CUT), 'scheduled absorption week')
   }

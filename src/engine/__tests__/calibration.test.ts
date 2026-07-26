@@ -1,7 +1,7 @@
 // The talk-test ladder has to be able to REACH this athlete's easy speed.
 //
 // The build brief's discovery session stops at 8 minutes, stepping 0.2 mph
-// from 4.0 — a ceiling of 4.6 mph. Minus the 1.0 mph margin that is 3.6 mph,
+// from 4.0, a ceiling of 4.6 mph. Minus the 1.0 mph margin that is 3.6 mph,
 // which is a brisk walk. Left alone, the engine could never derive a jogging
 // speed at all, and the flaw is invisible in any test that hands calibration a
 // result rather than running the ladder.
@@ -60,7 +60,7 @@ describe('an unfinished ladder does not complete calibration', () => {
 
   it('still applies the full margin when it gives up and accepts the top speed', () => {
     // A stubborn athlete who never reports a breathing change must not be left
-    // without a plan forever — but the result errs slow.
+    // without a plan forever, but the result errs slow.
     const sim = new Sim()
     ladder(sim, MON, 4.0, 4, 'time_limit')
     ladder(sim, addDays(MON, 2), 4.6, 4, 'time_limit')

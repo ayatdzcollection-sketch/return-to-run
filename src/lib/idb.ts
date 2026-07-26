@@ -53,7 +53,7 @@ export function openDb(): Promise<IDBDatabase> {
   return dbPromise
 }
 
-/** Reset the cached handle. Tests only — the app opens the database once. */
+/** Reset the cached handle. Tests only, the app opens the database once. */
 export function resetDbCache(): void {
   dbPromise = null
 }
@@ -97,7 +97,7 @@ export async function getMeta<T>(key: string): Promise<T | undefined> {
 }
 
 /**
- * Meta is the one mutable store — sync cursors and the schema stamp.
+ * Meta is the one mutable store, sync cursors and the schema stamp.
  *
  * It holds no training history: everything here is derivable from the log and
  * the server, so overwriting it can lose progress but never truth.

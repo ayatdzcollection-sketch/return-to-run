@@ -28,7 +28,7 @@ export function todayLocal(now: Date = new Date()): LocalDate {
   return asLocalDate(`${y}-${pad(m)}-${pad(d)}`)
 }
 
-/** ISO timestamp with the device's offset — audit trail and sort tiebreak. */
+/** ISO timestamp with the device's offset, audit trail and sort tiebreak. */
 export function nowIso(now: Date = new Date()): string {
   const offsetMin = -now.getTimezoneOffset()
   const sign = offsetMin >= 0 ? '+' : '-'

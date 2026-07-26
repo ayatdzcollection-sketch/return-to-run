@@ -1,7 +1,7 @@
 // ============================================================
 // THE SAFETY RAILS. One named block per invariant.
 //
-// Invariants 7 and 2 are not tested as the build brief wrote them — the
+// Invariants 7 and 2 are not tested as the build brief wrote them, the
 // research pass replaced the ACWR clamp outright and demoted the 10% rule.
 // Each block below states what it now asserts and why, so a reader comparing
 // against the brief can see the divergence rather than assume a gap.
@@ -28,7 +28,7 @@ describe('I1: prescriptions are in minutes, and distance never enters the model'
     }
   })
 
-  it('counts only jogging minutes as load — walking is free', () => {
+  it('counts only jogging minutes as load, walking is free', () => {
     // Every level is mostly walking early on. If walking counted, the caps
     // would bind on warm-ups.
     const walkHeavy = LADDER[0]!
@@ -243,7 +243,7 @@ describe('I8: the pain interrupt is mechanical', () => {
     sim.pain(hurt, 'shin', 4)
     sim.answerGate(addDays(hurt, 1), 'post_pain')
     for (let i = 1; i <= 3; i++) sim.open(addDays(hurt, i))
-    // Still blocked on day 3 — the clean-day count has not yet been satisfied
+    // Still blocked on day 3, the clean-day count has not yet been satisfied
     // by days that are recorded in the timeline.
     expect(sim.state(addDays(hurt, 2)).interruptKind).toBe('bone')
   })

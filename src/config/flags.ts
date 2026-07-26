@@ -1,5 +1,5 @@
 // ============================================================
-// FEATURE FLAGS — compile-time constants only.
+// FEATURE FLAGS: compile-time constants only.
 //
 // There is deliberately NO runtime or storage-backed flag store. A mutable
 // flag would be an attack surface on the safety gates, and the athlete this
@@ -16,7 +16,7 @@ export const FLAGS = {
    * LLM-written session rationales via a server-side proxy.
    *
    * OFF, and off by default for the foreseeable future. The narrative layer
-   * renders fixed sentences keyed by rationale code — no API key, no network
+   * renders fixed sentences keyed by rationale code, no API key, no network
    * dependency, works in a basement with no signal. If this is ever turned on
    * it becomes a Supabase Edge Function; a client-side key is never acceptable.
    */
@@ -35,7 +35,7 @@ export const FLAGS = {
   /**
    * Shadow mode for the heart-rate quality gates.
    *
-   * ON. The cadence-lock detector's thresholds are engineering estimates —
+   * ON. The cadence-lock detector's thresholds are engineering estimates
    * the research pass found the failure mode is unquantified in the
    * peer-reviewed literature, with no published prevalence, episode duration,
    * or triggering combinations. Worse, for this athlete bpm ~ cadence is the

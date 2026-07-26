@@ -1,7 +1,7 @@
 {
   "name": "Return to Run",
   "short_name": "Return",
-  "description": "Return to running — one session at a time",
+  "description": "Return to running, one session at a time",
   "start_url": "/return-to-run/",
   "display": "standalone",
   "background_color": "#0c0a09",

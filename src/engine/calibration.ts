@@ -1,16 +1,16 @@
 // ============================================================
-// CALIBRATION — turning a self-administered talk test into a belt speed.
+// CALIBRATION: turning a self-administered talk test into a belt speed.
 //
 // The single most important correction in this engine. A motivated person can
 // force out a full sentence well above their first ventilatory threshold: the
 // talk test's NEGATIVE stage ("cannot speak comfortably") corresponds to VT2,
-// not VT1 — 93% of VO2peak versus 77% at threshold. Administered naively, "can
+// not VT1, 93% of VO2peak versus 77% at threshold. Administered naively, "can
 // you still talk?" identifies something close to threshold and calls it easy.
 //
 // Three guards, all applied:
-//   1. A strict criterion — the first CHANGE IN BREATHING, not loss of speech.
+//   1. A strict criterion, the first CHANGE IN BREATHING, not loss of speech.
 //   2. A fixed margin of 1.0 mph. The brief specified 0.4, which is smaller
-//      than the talk test's own minimal detectable change (~0.9 mph) — a
+//      than the talk test's own minimal detectable change (~0.9 mph), a
 //      margin inside the instrument's noise floor protects nothing.
 //   3. An absolute HR backstop that truncates, never prescribes.
 // See RESEARCH.md §A13.
@@ -41,7 +41,7 @@ export interface CalibrationResult {
  * Derive the conversational speed from the talk tests on record.
  *
  * Two sessions, take the LOWER. With a minimal detectable change near 0.9 mph
- * a single administration is not a measurement — two tests on the same athlete
+ * a single administration is not a measurement, two tests on the same athlete
  * in the same week can legitimately disagree by more than the entire margin.
  */
 export function calibrate(t: Timeline): CalibrationResult {
@@ -52,12 +52,12 @@ export function calibrate(t: Timeline): CalibrationResult {
     }
   }
 
-  // A ladder that ran out of time never found the ceiling — it only proved the
+  // A ladder that ran out of time never found the ceiling, it only proved the
   // ceiling is ABOVE the top speed reached. Treating that as a result would
   // pin him to a brisk walk forever, because eight minutes of 0.2 mph steps
   // from 4.0 mph cannot reach a realistic jogging speed. So an unfinished
   // ladder does not complete calibration: the next discovery session resumes
-  // from where this one stopped, and each is only eight jogging minutes —
+  // from where this one stopped, and each is only eight jogging minutes
   // the same dose as the first rung of the plan.
   const found = t.talkTests.filter((r) => r.stopReason !== 'time_limit')
   const topReached = Math.max(...t.talkTests.map((r) => r.maxSpeedMph))
@@ -81,7 +81,7 @@ export function calibrate(t: Timeline): CalibrationResult {
     provisional: t.talkTests.length < TUNABLES.TALK_TEST.CALIBRATION_SESSIONS,
     hrAtTalkSpeed: hrs.length > 0 ? Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length) : null,
     // 1.0 mph off a slow talk-test result lands below a jog. That is not a
-    // failure of the test — it means walk/run is the correct prescription and
+    // failure of the test, it means walk/run is the correct prescription and
     // a running speed is not.
     belowJogFloor: speed < TUNABLES.TALK_TEST.MIN_VIABLE_JOG_MPH,
     resumeFromMph: topReached,
@@ -99,7 +99,7 @@ const MAX_DISCOVERY_SESSIONS = 3
  * understood as an artifact guard rather than a physiological boundary: it only
  * binds when measured HR at talk-test speed exceeds 160, and since the talk
  * test approximates VT1 (~140 bpm in an adolescent), a reading that high is
- * evidence of sensor error — most likely cadence lock, whose output band starts
+ * evidence of sensor error, most likely cadence lock, whose output band starts
  * right about at the cap.
  *
  * Returns null when there is no device, no calibration, or untrustworthy data.
@@ -120,7 +120,7 @@ export function easyHrCeiling(raw: number | null): { ceiling: number | null; tru
  * Assign tolerance class from the first week's observations.
  *
  * This sets progression RATE, never the ceiling. `aggressive` buys earlier
- * gates and nothing else — the volume caps are identical to `standard`, which
+ * gates and nothing else, the volume caps are identical to `standard`, which
  * is the whole point: responding well is not evidence that connective tissue
  * has adapted, because the aerobic system reports ready months before the
  * skeleton does.
