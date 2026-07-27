@@ -1,0 +1,34 @@
+name: Weekly status check
+
+# The notification channel for the athlete's supervisor.
+#
+# Runs the exception-only digest against the mirror once a week. A clean week
+# passes silently and sends nothing. A week with bone-site pain, a silent
+# stretch, or a plan that has run out of road FAILS the job, and GitHub emails
+# the repo owner with the reason quoted in the summary.
+#
+# Deliberately not a Claude cron: those live only inside one session and expire
+# after seven days, which is useless for something that needs to fire nine
+# weeks out. This survives the laptop being closed.
+
+on:
+  schedule:
+    # Monday 12:47 UTC. Off the hour on purpose: every scheduled workflow that
+    # asks for ":00" lands on GitHub's runners at the same instant and gets
+    # queued behind them.
+    - cron: '47 12 * * 1'
+  workflow_dispatch:
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check on the athlete
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: node scripts/status.mjs

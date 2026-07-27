@@ -106,15 +106,30 @@ async function main() {
 
   // ── Report ────────────────────────────────────────────────
   const summary = `week ${weeks}, ${completed} sessions done, ${cutShort} cut short, ${missed} missed`
+  const lines = []
   if (flags.length === 0) {
-    console.log(`STATUS: nothing needs you. (${summary}, last opened ${lastOpen}.)`)
+    lines.push(`STATUS: nothing needs you. (${summary}, last opened ${lastOpen}.)`)
   } else {
-    console.log(`STATUS: ${flags.length} thing${flags.length > 1 ? 's need' : ' needs'} you. (${summary}.)`)
-    for (const f of flags) console.log(`  - ${f}`)
+    lines.push(`STATUS: ${flags.length} thing${flags.length > 1 ? 's need' : ' needs'} you. (${summary}.)`)
+    for (const f of flags) lines.push(`  - ${f}`)
   }
   if (today < TARGET_DATE) {
-    console.log(`  (tryout ${TARGET_DATE}, ${daysBetween(TARGET_DATE, today)} days away)`)
+    lines.push(`  (tryout ${TARGET_DATE}, ${daysBetween(TARGET_DATE, today)} days away)`)
   }
+  const report = lines.join('\n')
+  console.log(report)
+
+  // On CI, surface the report where the notification email will quote it.
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    const { appendFileSync } = await import('node:fs')
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, '```\n' + report + '\n```\n')
+  }
+
+  // A non-zero exit is the notification channel: GitHub emails the repo owner
+  // when a scheduled workflow fails, and stays quiet when it passes. That is
+  // the same exception-only contract the app gives the athlete, pointed the
+  // other way. Nothing to check when nothing is wrong.
+  if (flags.length > 0) process.exit(1)
 }
 
 main().catch((err) => {
