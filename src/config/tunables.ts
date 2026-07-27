@@ -21,6 +21,27 @@
 
 export type EvidenceLevel = 'strong' | 'moderate' | 'weak' | 'lore'
 
+/**
+ * Dates this particular plan is aimed at.
+ *
+ * Separate from TUNABLES because these are not physiology, they are this
+ * athlete's calendar. They carry no evidence rating for the same reason a
+ * birthday does not.
+ *
+ * TARGET_DATE is the tryout standard. The research pass concluded it is not
+ * reachable within any defensible progression (RESEARCH.md A1), so the engine
+ * treats it as a date to REPORT AGAINST, never as a date to compress toward.
+ * HORIZON_DATE is where this plan's authority ends and a human writes the next
+ * one, because the brief scoped it to the season and nothing further.
+ */
+export const PLAN = {
+  TARGET_DATE: '2026-08-10' as import('../engine/dates.ts').LocalDate,
+  FIRST_MEET: '2026-08-19' as import('../engine/dates.ts').LocalDate,
+  HORIZON_DATE: '2026-10-31' as import('../engine/dates.ts').LocalDate,
+  /** Weeks holding at the top rung before the engine asks for a new block. */
+  SEASON_REVIEW_WEEKS: 8,
+} as const
+
 export const TUNABLES = {
   // ── Load guardrail ────────────────────────────────────────
   // The brief's ACWR clamp (0.8-1.3) is GONE. Not clamped, not uncoupled, not

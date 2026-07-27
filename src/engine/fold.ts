@@ -25,6 +25,7 @@ import {
 import { blocksRunning, computeGateDue, computeInterrupt, computeSilence } from './interrupts.ts'
 import { computeProbe } from './modifiers.ts'
 import { breachedCeiling, evaluateDrift } from './hr.ts'
+import { planStatus, projectPlan, type PlanInputs, type PlanStatus, type Projection } from './plan.ts'
 import { TUNABLES } from '../config/tunables.ts'
 import { FIRST_LEVEL } from '../config/seedPlan.ts'
 
@@ -42,6 +43,10 @@ export interface FoldResult extends AthleteState {
   calibrationResumeFromMph: number
   toleranceFactor: number
   sessionsNeededPerLevel: number
+  /** Where he is in the arc, and whether the engine has run out of road. */
+  plan: PlanStatus
+  /** Provisional shape of what is coming. Never a promise. */
+  projection: Projection
 }
 
 export function computeState(events: readonly import('./types.ts').AppEvent[], today: LocalDate): FoldResult {
@@ -150,6 +155,22 @@ export function computeState(events: readonly import('./types.ts').AppEvent[], t
 
   const outdoorSessions = t.ordered.filter((d) => d.jogMin > 0 && t.profile.surface !== 'treadmill').length
 
+  // Full-length sessions at the terminal ceiling: the goal, actually done.
+  const topLevelCompletions = t.ordered
+    .filter((d) => d.longestBoutMin >= TUNABLES.LOAD.TERMINAL_SESSION_CEILING_MIN)
+    .map((d) => d.date)
+
+  const planInputs: PlanInputs = {
+    today,
+    level: Math.max(FIRST_LEVEL, ladder.level),
+    cleanSessionsAtLevel: ladder.cleanSessionsAtLevel,
+    sessionsNeededPerLevel: needed,
+    bestContinuousMin: bestCont,
+    firstDate: t.firstDate,
+    topLevelCompletions,
+    interrupted,
+  }
+
   return {
     today,
     phase,
@@ -203,6 +224,8 @@ export function computeState(events: readonly import('./types.ts').AppEvent[], t
     calibrationResumeFromMph: cal.resumeFromMph,
     toleranceFactor: toleranceFactor(toleranceClass),
     sessionsNeededPerLevel: needed,
+    plan: planStatus(planInputs),
+    projection: projectPlan(planInputs),
   }
 }
 
