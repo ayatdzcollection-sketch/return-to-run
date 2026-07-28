@@ -125,7 +125,11 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
   if (footwear.record) caps.push(footwear.record)
   const surface = surfaceLimit(state.surface, state.outdoorSessions)
   if (surface.record) caps.push(surface.record)
-  const heat = heatLimit(opts.wbgtC ?? null)
+  // Outdoor WBGT governs OUTDOOR sessions. Applying it to a treadmill in a
+  // basement zeroed his session on a hot August afternoon he was never going
+  // to be standing in. Indoors the relevant rules are the fan instruction and
+  // the ambient guard, not the outdoor activity-modification table.
+  const heat = heatLimit(state.surface === 'treadmill' ? null : (opts.wbgtC ?? null))
   if (heat.record) caps.push(heat.record)
 
   if (heat.prohibited && state.surface !== 'treadmill') {
@@ -200,6 +204,20 @@ export function prescribe(state: FoldResult, date: LocalDate, opts: PrescribeOpt
   // ── 6. Scale the ladder structure to the allowed minutes ──
   const structure = scaleStructure(buildStructure(level), jogMin)
   const actualJog = jogMinutes(structure)
+
+  // When the caps leave nothing to run, this IS a rest day and must say so.
+  // Otherwise the card renders REST while the sentence underneath explains why
+  // today is SHORTER, which reads as a bug and quietly undermines every other
+  // thing the app tells him.
+  if (actualJog <= 0) {
+    return rest(base, 'scheduled_rest', [...caps, {
+      rule: loadResult.binding ?? 'capped_to_zero',
+      original: round1(desired),
+      applied: 0,
+      note: 'the caps left no running today',
+    }])
+  }
+
   const kind: PrescriptionKind = state.daysSinceLastRun !== null && state.daysSinceLastRun >= 7
     ? 're_entry'
     : longestContinuousJogMin(structure) === actualJog && actualJog > 0

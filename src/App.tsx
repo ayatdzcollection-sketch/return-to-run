@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { computeState, type FoldResult } from './engine/fold.ts'
 import { prescribe } from './engine/prescribe.ts'
-import { addDays, mondayOf, tryLocalDate } from './engine/dates.ts'
+import { addDays, dayOfWeek, mondayOf, tryLocalDate } from './engine/dates.ts'
 import type { AppEvent, EventDraft, Prescription } from './engine/types.ts'
 import { LADDER_SUMMARY } from './engine/plan.ts'
 import { levelAt } from './config/seedPlan.ts'
@@ -13,6 +13,8 @@ import { durabilityCheck, pendingCount, sync, type SyncState } from './lib/sync.
 import { getAccessCode, hasSupabase, setAccessCode } from './lib/supabase.ts'
 import { rationaleSentence, SETUP_NOTICES } from './lib/narrative.ts'
 import { useLiveDate, useRefreshOnResume } from './lib/useLive.ts'
+import { wbgtFor } from './lib/weather.ts'
+import { AfterSession, LoggedElsewhere, SorenessPrompt, TeamPracticeSheet } from './components/Inputs.tsx'
 import { TodayCard } from './components/TodayCard.tsx'
 import { GateQuestion, SomethingWrong, type WrongChoice } from './components/Sheets.tsx'
 import { CalibrationWizard } from './components/Calibration.tsx'
@@ -42,6 +44,13 @@ export default function App() {
 
   const [showWrong, setShowWrong] = useState(false)
   const [showPlan, setShowPlan] = useState(false)
+  const [showTeam, setShowTeam] = useState(false)
+  const [showElsewhere, setShowElsewhere] = useState(false)
+  const [afterSession, setAfterSession] = useState(false)
+  const [teamMin, setTeamMin] = useState<number | null>(null)
+  // Null until the lookup returns, and null simply means the heat rules do not
+  // apply. An offline basement must not block a treadmill session.
+  const [wbgtC, setWbgtC] = useState<number | null>(null)
   const [seenNotices, setSeenNotices] = useState(() => !!localStorage.getItem(NOTICES_KEY))
   const [seenPlanIntro, setSeenPlanIntro] = useState(() => !!localStorage.getItem(PLAN_INTRO_KEY))
   const [code, setCode] = useState(() => getAccessCode())
@@ -61,17 +70,17 @@ export default function App() {
 
   const refresh = useCallback(() => {
     void (async () => {
-      await recordAppOpen()
+      await recordAppOpen(today)
       await reload()
       setSyncState(await sync(await getAllEvents()))
       await reload()
     })()
-  }, [reload])
+  }, [reload, today])
 
   useEffect(() => {
     void (async () => {
       await stampSchemaVersion()
-      await recordAppOpen()
+      await recordAppOpen(today)
       // Paint from the local log first. The mirror is an optimisation, not a
       // dependency, and the treadmill is in a basement.
       await reload()
@@ -79,10 +88,15 @@ export default function App() {
       await reload()
       void durabilityCheck()
     })()
-  }, [reload])
+  }, [reload, today])
 
   // Anything logged on another device appears when he returns to the app.
   useRefreshOnResume(refresh)
+
+  // Only bother looking up the weather once he is actually running outdoors.
+  useEffect(() => {
+    void wbgtFor(today).then(setWbgtC)
+  }, [today])
 
   const state: FoldResult | null = useMemo(
     () => (events === null ? null : computeState(events, today)),
@@ -92,8 +106,8 @@ export default function App() {
   const todays: Prescription | null = useMemo(() => {
     if (!state) return null
     const existing = state.timeline.days.get(today)?.prescription
-    return existing ?? prescribe(state, today, { id: ulid() })
-  }, [state, today])
+    return existing ?? prescribe(state, today, { id: ulid(), wbgtC, teamPracticeMin: teamMin })
+  }, [state, today, wbgtC, teamMin])
 
   const week = useMemo(() => {
     if (!state) return []
@@ -151,18 +165,60 @@ export default function App() {
     return <PlanIntro state={state} onDone={() => { localStorage.setItem(PLAN_INTRO_KEY, '1'); setSeenPlanIntro(true) }} />
   }
 
-  const logged = state.timeline.days.get(today)?.outcome
+  const todayRec = state.timeline.days.get(today)
+  const logged = todayRec?.outcome
   const done = logged === 'completed' || logged === 'cut_short' || logged === 'missed'
-  const issuedToday = !!state.timeline.days.get(today)?.prescription
+  const issuedToday = !!todayRec?.prescription
+
+  // Asked the MORNING AFTER, which is when the answer is actually informative.
+  const ranYesterday = (state.timeline.days.get(addDays(today, -1))?.jogMin ?? 0) > 0
+  const needsSoreness = ranYesterday && todayRec?.soreness == null
+
+  const isProbeDay = dayOfWeek(today) === 0 && todays.plannedJogMin > 0 && !todayRec?.probe
+  const askHr = state.hrDevicePresent
+
+  const issueIfNeeded = async () => {
+    if (!issuedToday) await append({ date: today, type: 'prescription_issued', prescription: todays })
+  }
+
+  /** Log the session, plus whatever the after-run sheet collected. */
+  const finishSession = async (extra: { rpe: number | null; hrAtMin5: number | null; avgHr: number | null }) => {
+    setAfterSession(false)
+    await issueIfNeeded()
+    if (isProbeDay && extra.rpe !== null) {
+      await append({
+        date: today, type: 'probe_result',
+        // Frozen at calibration: comparing the same speed week to week is the
+        // entire point, so a probe at a different speed is not comparable.
+        fixedSpeedMph: state.ceilings.probeSpeedMph ?? state.ceilings.speedCeilingMph ?? 0,
+        rpe: extra.rpe, hrAtMin5: extra.hrAtMin5,
+      })
+    }
+    if (extra.avgHr !== null) {
+      await append({
+        date: today, type: 'hr_summary', prescriptionId: todays.id,
+        // A typed-in average gives a mean and nothing else. Drift needs a
+        // sample stream, so those stay null and drift stays unassessable
+        // rather than being invented from one number.
+        meanFirst10: null, meanFirst20: extra.avgHr, meanMin15to25: null, peakFirst20: null,
+        sampleCount: 1, discardedPct: 0, confidence: 'low',
+      })
+    }
+    await append({ date: today, type: 'session_completed', prescriptionId: todays.id })
+  }
 
   const onDone = async () => {
-    if (!issuedToday) await append({ date: today, type: 'prescription_issued', prescription: todays })
+    // Collect the probe and heart rate first, while he is still standing on
+    // the belt. Asking later means not asking.
+    if (isProbeDay || askHr) { setAfterSession(true); return }
+    await issueIfNeeded()
     await append({ date: today, type: 'session_completed', prescriptionId: todays.id })
   }
 
   const onWrong = async (choice: WrongChoice) => {
     setShowWrong(false)
-    if (!issuedToday) await append({ date: today, type: 'prescription_issued', prescription: todays })
+    if (choice.kind === 'ran_elsewhere') { setShowElsewhere(true); return }
+    await issueIfNeeded()
     const prescriptionId = todays.id
     switch (choice.kind) {
       case 'missed': return append({ date: today, type: 'session_missed', prescriptionId })
@@ -194,6 +250,10 @@ export default function App() {
         </button>
       )}
 
+      {needsSoreness && (
+        <SorenessPrompt onPick={(score) => void append({ date: today, type: 'soreness_reported', score })} />
+      )}
+
       <TodayCard
         p={todays}
         rationale={rationaleSentence({
@@ -214,6 +274,10 @@ export default function App() {
           <>
             {todays.plannedJogMin > 0 && <button className="btn-primary" onClick={() => void onDone()}>Done</button>}
             <button className="btn-quiet" onClick={() => setShowWrong(true)}>Something’s wrong</button>
+            {/* The engine cannot see the team. It has to be told. */}
+            {todays.kind !== 'team_capped' && state.footwearState !== 'none' && (
+              <button className="btn-quiet" onClick={() => setShowTeam(true)}>Team practice today</button>
+            )}
           </>
         )}
       </div>
@@ -221,7 +285,38 @@ export default function App() {
       {showWrong && (
         <SomethingWrong plannedJogMin={todays.plannedJogMin} onPick={(c) => void onWrong(c)} onClose={() => setShowWrong(false)} />
       )}
-      {showPlan && <PlanView state={state} week={week} onClose={() => setShowPlan(false)} />}
+      {showTeam && (
+        <TeamPracticeSheet
+          onPick={(m) => { setTeamMin(m); setShowTeam(false) }}
+          onClose={() => setShowTeam(false)}
+        />
+      )}
+      {showElsewhere && (
+        <LoggedElsewhere
+          onClose={() => setShowElsewhere(false)}
+          onPick={(durationMin) => {
+            setShowElsewhere(false)
+            void append({ date: today, type: 'external_session', durationMin, surface: state.surface, intensityGuess: 'mixed' })
+          }}
+        />
+      )}
+      {afterSession && (
+        <AfterSession
+          askProbe={isProbeDay}
+          askHr={askHr}
+          probeSpeedMph={state.ceilings.probeSpeedMph}
+          onDone={(r) => void finishSession(r)}
+          onSkip={() => void finishSession({ rpe: null, hrAtMin5: null, avgHr: null })}
+        />
+      )}
+      {showPlan && (
+        <PlanView
+          state={state}
+          week={week}
+          onClose={() => setShowPlan(false)}
+          onProfile={(p) => void append({ date: today, type: 'profile_updated', ...p })}
+        />
+      )}
     </div>
   )
 }

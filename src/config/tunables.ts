@@ -40,6 +40,16 @@ export const PLAN = {
   HORIZON_DATE: '2026-10-31' as import('../engine/dates.ts').LocalDate,
   /** Weeks holding at the top rung before the engine asks for a new block. */
   SEASON_REVIEW_WEEKS: 8,
+  /**
+   * Where he trains, for the heat lookup. Southern Michigan. Hardcoded rather
+   * than asked for: this is a single-athlete app, and a geolocation permission
+   * prompt to answer a question the code already knows the answer to is a
+   * worse trade than a constant somebody edits once.
+   */
+  LATITUDE: 42.33,
+  LONGITUDE: -83.05,
+  /** Local hour team practice runs. Afternoon and morning are different worlds. */
+  PRACTICE_HOUR: 16,
 } as const
 
 export const TUNABLES = {

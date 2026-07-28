@@ -27,6 +27,7 @@ export type WrongChoice =
   | { kind: 'cut_short'; jogMinDone: number }
   | { kind: 'pain'; location: PainLocation; severity: number; gaitAltering: boolean; when: 'during' | 'after' | 'next_am' }
   | { kind: 'felt_awful' }
+  | { kind: 'ran_elsewhere' }
 
 export function SomethingWrong({ plannedJogMin, onPick, onClose }: {
   plannedJogMin: number
@@ -56,6 +57,13 @@ export function SomethingWrong({ plannedJogMin, onPick, onClose }: {
         <button className="btn-option" onClick={() => onPick({ kind: 'felt_awful' })}>
           <div className="font-semibold">Finished it, but felt awful</div>
           <div className="mt-0.5 text-sm text-stone-500">No pain, just wrong</div>
+        </button>
+        {/* A run the app never prescribed still happened to his legs, so it
+            still has to reach the load model. Without this the engine simply
+            cannot see team practice. */}
+        <button className="btn-option" onClick={() => onPick({ kind: 'ran_elsewhere' })}>
+          <div className="font-semibold">I ran something else</div>
+          <div className="mt-0.5 text-sm text-stone-500">Practice, or a run the app didn’t give you</div>
         </button>
       </div>
     </Sheet>

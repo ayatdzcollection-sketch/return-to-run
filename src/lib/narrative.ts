@@ -153,6 +153,31 @@ export const PAIN_QUESTIONS = [
   { id: 'night', text: 'Has it woken you up or hurt while sitting still?' },
 ] as const
 
+/**
+ * The one-time message for the coach, at the point he joins practice.
+ *
+ * Three sentences, per the brief: the year off, where he actually is, and the
+ * ask. Written to be forwarded verbatim, so it carries no app jargon and makes
+ * no claim the evidence does not support. It asks for modified volume for two
+ * weeks rather than for special treatment.
+ */
+export function coachMessage(o: { longestRunMin: number; weeksRunning: number; capMin: number }): string {
+  return [
+    `Hi, quick note before ${'he'} starts with the group.`,
+    `He took about a year completely off running and started building again ${o.weeksRunning} week${o.weeksRunning === 1 ? '' : 's'} ago, so his longest continuous run so far is ${Math.round(o.longestRunMin)} minutes.`,
+    `For the next two weeks he is going to warm up with the team, run the first ${Math.round(o.capMin)} minutes, then peel off and rejoin for cooldown, strides and core.`,
+    `It is not a fitness problem, it is a bone and tendon one: those adapt a lot slower than the lungs do, and the first six to eight weeks back are where people break. He should be doing full sessions after that.`,
+  ].join(' ')
+}
+
+/** Next-morning soreness. One tap, and it is the input that sets his tolerance class. */
+export const SORENESS_OPTIONS = [
+  { score: 0 as const, label: 'Fine' },
+  { score: 1 as const, label: 'A bit stiff' },
+  { score: 2 as const, label: 'Sore' },
+  { score: 3 as const, label: 'Really sore' },
+]
+
 export const REFERRAL_COPY =
   'Stop running and get this looked at before you run again. Pain on a bone that keeps coming back is not something to train through, and the sites that matter most are the ones that hurt least early on.'
 

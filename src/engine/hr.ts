@@ -224,6 +224,12 @@ export function breachedCeiling(
   meanFirst20: number | null, ceiling: number | null, confidence: HrConfidence): boolean {
   // The ceiling applies to the first 20 minutes only. Beyond that, cardiac
   // drift of 5-10 bpm at constant pace is expected and is not a breach.
-  if (ceiling === null || meanFirst20 === null || confidence !== 'usable') return false
+  //
+  // Accepts `low` as well as `usable`, unlike the drift check above. A MEAN is
+  // robust to exactly the per-sample noise that makes drift unreliable on a
+  // budget sensor, and v1 heart-rate entry is the athlete typing the average
+  // his watch showed him, which is `low` by definition. Refusing `low` here
+  // meant this check could never fire at all.
+  if (ceiling === null || meanFirst20 === null || confidence === 'none') return false
   return meanFirst20 > ceiling
 }

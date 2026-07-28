@@ -10,6 +10,7 @@
 // ============================================================
 
 import type { AppEvent, EventDraft } from '../engine/types.ts'
+import type { LocalDate } from '../engine/dates.ts'
 import { todayLocal, nowIso } from './clock.ts'
 import { ulid } from './uid.ts'
 import { appendEvents, getAllEvents } from './storage.ts'
@@ -22,8 +23,12 @@ import { enqueueForPush } from './sync.ts'
  * seven days", not how many times. One row a day also keeps the log small
  * enough that a full refold stays sub-millisecond.
  */
-export async function recordAppOpen(): Promise<boolean> {
-  const today = todayLocal()
+export async function recordAppOpen(on?: LocalDate): Promise<boolean> {
+  // Takes the date the app is REASONING about, not the wall clock. In
+  // production they are the same. Under the dev date override they are not,
+  // and reading the wall clock here manufactured a fake week of silence that
+  // decayed the athlete's load and demoted his phase for no reason.
+  const today = on ?? todayLocal()
   const existing = await getAllEvents()
   if (existing.some((e) => e.type === 'app_open' && e.date === today)) return false
 

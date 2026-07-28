@@ -12,6 +12,9 @@
 import type { FoldResult } from '../engine/fold.ts'
 import type { Prescription } from '../engine/types.ts'
 import { LADDER_SUMMARY } from '../engine/plan.ts'
+import { coachMessage } from '../lib/narrative.ts'
+import { Setup } from './Setup.tsx'
+import type { FootwearState, Surface } from '../engine/types.ts'
 import { addDays, mondayOf, type LocalDate } from '../engine/dates.ts'
 import { PLAN } from '../config/tunables.ts'
 
@@ -23,10 +26,11 @@ const PHASE_LABEL: Record<string, string> = {
   P4: 'In season',
 }
 
-export function PlanView({ state, week, onClose }: {
+export function PlanView({ state, week, onClose, onProfile }: {
   state: FoldResult
   week: (Prescription | null)[]
   onClose: () => void
+  onProfile: (p: { footwearState?: FootwearState; surface?: Surface; hrDevicePresent?: boolean }) => void
 }) {
   const monday = mondayOf(state.today)
   const probes = state.timeline.ordered.filter((d) => d.probe).slice(-10)
@@ -165,6 +169,49 @@ export function PlanView({ state, week, onClose }: {
             </p>
           </section>
         )}
+
+        {/* Recalibration is offered, not forced. A full speed-discovery ladder
+            every fortnight would be disruptive at rung 8, and the Monday probe
+            already re-derives the ceiling continuously from falling heart rate
+            at a fixed speed. This is the backstop for when that has gone quiet. */}
+        {state.recalibrationDue && state.ceilings.conversationalSpeedMph !== null && (
+          <section className="rounded-xl border border-stone-800 bg-stone-900/40 p-4">
+            <div className="label">worth re-checking</div>
+            <p className="mt-2 text-sm leading-relaxed text-stone-400">
+              It has been a couple of weeks since your speed was last measured. If the Monday
+              check has been flat, redo the talk test: 5 minutes brisk walk, then step up from
+              your current ceiling until your breathing first changes.
+            </p>
+          </section>
+        )}
+
+        <Setup
+          footwear={state.footwearState}
+          surface={state.surface}
+          hrDevice={state.hrDevicePresent}
+          onChange={onProfile}
+        />
+
+        <section>
+          <div className="label">for your coach</div>
+          <p className="mt-2 rounded-xl border border-stone-800 bg-stone-900/60 p-4 text-sm leading-relaxed text-stone-300">
+            {coachMessage({
+              longestRunMin: state.continuousCapacityMin,
+              weeksRunning: state.weekNumber,
+              capMin: Math.max(5, Math.round(state.load.lastBuildWeekMin ? state.load.lastBuildWeekMin / 3 : 10)),
+            })}
+          </p>
+          <button
+            className="btn-quiet mt-3"
+            onClick={() => void navigator.clipboard?.writeText(coachMessage({
+              longestRunMin: state.continuousCapacityMin,
+              weeksRunning: state.weekNumber,
+              capMin: Math.max(5, Math.round(state.load.lastBuildWeekMin ? state.load.lastBuildWeekMin / 3 : 10)),
+            }))}
+          >
+            Copy
+          </button>
+        </section>
 
         <section>
           <div className="label">why today looks like this</div>
